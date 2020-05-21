@@ -8,6 +8,7 @@ import {
 var sf = {};
 
 sf.listen = '0.0.0.0:2020';
+sf.cors = '*';
 sf.debug = false
 
 sf.before = (r)=>null;
@@ -39,6 +40,15 @@ sf.run = async () => {
         r.url.substr(2).split('&').forEach(v => {r.query[v.split('=')[0]] = v.split('=')[1] ? decodeURIComponent(v.split('=')[1]) : '';});
         r.json = null;
         r.reply = null;
+        var headers = {"Content-Type": "application/json"};
+        if(r.headers.get("Origin")){
+            headers["Access-Control-Allow-Origin"] = sf.cors;
+            headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, HEAD, PATCH";
+            if(r.headers.get("Access-Control-Request-Headers")){
+                headers["Access-Control-Allow-Headers"] = r.headers.get("Access-Control-Request-Headers");
+            }
+            headers["Access-Control-Max-Age"] = 24*60*60;
+        }
 
         var h = sf.handles[r.url.split('?')[0]];
         if(!h){
@@ -54,7 +64,7 @@ sf.run = async () => {
                 } catch (e) {
                     var o = sf.err(e.toString());
                     r.respond({
-                        headers: new Headers({"Content-Type": "application/json"}),
+                        headers: new Headers(headers),
                         body: JSON.stringify(o),
                     });
                     r.reply = o;
@@ -74,7 +84,7 @@ sf.run = async () => {
 
             var o = sf.err('404');
             r.respond({
-                headers: new Headers({"Content-Type": "application/json"}),
+                headers: new Headers(headers),
                 body: JSON.stringify(o),
             });
             r.reply = o;
@@ -113,13 +123,13 @@ sf.run = async () => {
         try{
             var o = await h(r);
             r.respond({
-                headers: new Headers({"Content-Type": "application/json"}),
+                headers: new Headers(headers),
                 body: JSON.stringify(o),
             });
         }catch(e){
             var o = sf.err(e.toString());
             r.respond({
-                headers: new Headers({"Content-Type": "application/json"}),
+                headers: new Headers(headers),
                 body: JSON.stringify(o),
             });
         }
