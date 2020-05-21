@@ -6,9 +6,9 @@ A stupid javascript web framework for deno
 
 * Don't care HTTP status code, method and header
 * Don't care cookie and session concepts
-* Always reads request query parameters and json body
-* Only handles query key with one value
-* Always responds json body
+* Always read request query parameters and json body
+* Only handle query key with one value
+* Always respond json body
 * No middlewares
 * No wildcard route
 * No group route
@@ -37,15 +37,11 @@ $ curl -v http://127.0.0.1:2020
 ### Request data
 
 ```
-...
-
 sf.handle('/hello', async (r)=>{
     console.log(r.query); // query object
     console.log(r.json); // json body object
     return { hello: "world" };
 });
-
-...
 
 ```
 
@@ -60,14 +56,10 @@ $ curl -v -d '{"hey":"girl"}' http://127.0.0.1:2020/hello?hey=boy
 ```
 
 ```
-...
-
 sf.handle('/hello', async (r)=>{
     return sf.err('a error string');
     return sf.ok({ hello: "world" });
 });
-
-...
 
 ```
 
@@ -80,6 +72,21 @@ sf.before = (r) => {
 sf.after = (r) => {
     console.log(r, r.query, r.json, r.reply)
 }
+```
+
+### Cookie? Session? No. Let's Token
+
+Waiting for (#3403)[https://github.com/denoland/deno/issues/3403]
+
+```
+import ckv from 'https://raw.githubusercontent.com/txthinking/sf/master/ckv.js';
+
+ckv.key = "abcdefghijklmnopqrstuvwxyz012345"; // 32 length key
+
+var token = ckv.encrypt("uid", 1);
+
+var uid = ckv.encrypt("uid", "token"); // token will not expire
+var uid = ckv.encrypt("uid", "token", 30*24*60*60); // token has an expiration time, 30 days
 ```
 
 ### Debug
@@ -114,7 +121,7 @@ await migrate.migrate("a unique id string", `
 await migrate.migrate("another unique id string", 'another sql');
 ```
 
-### Database operations(mysql)
+### Database operation(mysql)
 
 #### Connect
 
@@ -141,7 +148,7 @@ console.log(o); // o is the row corresponding object contain id
 
 // object keys must match table fields or less and must contain id
 var o = await mysql.u({
-	id: 1,
+    id: 1,
     email: 'hey@sf.com',
 });
 console.log(o); // o is the updated row corresponding object
@@ -151,7 +158,7 @@ var o = await mysql.r(1);
 console.log(o); // o is the row corresponding object
 
 // pass in id
-await mysql.r(1);
+await mysql.d(1);
 ```
 
 #### Raw SQL
@@ -167,6 +174,7 @@ await mysql.execute('update user set email=? where id=?', ['hi@sf.com', 1]);
 var r = await mysql.transaction(async (mysql)=>{
     var r = await mysql.c('user', {email: 'hey@sf.com'});
     // throw new Error('rollback');
+    await mysql.execute('update user set email=? where id=?', ['hi@sf.com', 1]);
     var rows = await mysql.query('select * from user where id=?', [1]);
     return rows;
 });
