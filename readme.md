@@ -6,7 +6,7 @@ A stupid javascript web framework for deno
 
 * Don't care HTTP status code, method and header
 * Don't care cookie and session concepts
-* Always read request query parameters and json body
+* If there is a body, should be json parseable
 * Only handle query key with one value
 * Always respond json body
 * No middlewares
@@ -76,7 +76,7 @@ sf.after = (r) => {
 
 ### Cookie? Session? No. Let's Token
 
-Waiting for (#3403)[https://github.com/denoland/deno/issues/3403]
+Waiting for [#3403](https://github.com/denoland/deno/issues/3403)
 
 ```
 import ckv from 'https://raw.githubusercontent.com/txthinking/sf/master/ckv.js';
@@ -85,8 +85,25 @@ ckv.key = "abcdefghijklmnopqrstuvwxyz012345"; // 32 length key
 
 var token = ckv.encrypt("uid", 1);
 
-var uid = ckv.encrypt("uid", "token"); // token will not expire
-var uid = ckv.encrypt("uid", "token", 30*24*60*60); // token has an expiration time, 30 days
+var uid = ckv.decrypt("uid", "token"); // token will not expire
+var uid = ckv.decrypt("uid", "token", 30*24*60*60); // token has an expiration time, 30 days
+```
+
+### Websocket
+
+```
+sf.wshandle('/ws', async (r, ws)=>{
+    for await (var v of ws) {
+        if (typeof v === "string") {
+            console.log("text", v);
+            throw new Error("fuck")
+            await ws.send(v);
+        }
+        if (v instanceof Uint8Array) {
+            console.log("binary", v);
+        }
+    }
+});
 ```
 
 ### Debug
