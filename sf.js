@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std/http/server.ts";
+import { serve, serveTLS } from "https://deno.land/std/http/server.ts";
 import {
     acceptWebSocket,
     isWebSocketCloseEvent,
@@ -7,7 +7,6 @@ import {
 
 var sf = {};
 
-sf.listen = '0.0.0.0:2020';
 sf.cors = '*';
 sf.debug = false
 
@@ -31,8 +30,19 @@ sf.log = (...args) => {
     }
 }
 
-sf.run = async () => {
-    var s = serve(sf.listen);
+sf.run = async (options) => {
+    if(!options.certFile && !options.keyFile){
+        var s = serve({
+            port: options.port || 2020,
+        });
+    }else{
+        var s = serveTLS({
+            port: options.port || 2020,
+            hostname: options.hostname,
+            certFile: options.certFile,
+            keyFile: options.keyFile,
+        });
+    }
     for await (var r of s) {
         sf.before(r);
         sf.log(r.url);

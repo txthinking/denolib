@@ -20,14 +20,12 @@ A stupid javascript web framework for deno
 ```
 import sf from 'https://raw.githubusercontent.com/txthinking/sf/master/sf.js';
 
-sf.listen = "0.0.0.0:2020"
-
 sf.handle('/', async (r)=>{
     // Must return json parseable result
     return { hello: "world" };
 });
 
-sf.run();
+sf.run({port: 2020});
 ```
 
 ```
@@ -104,6 +102,17 @@ sf.wshandle('/ws', async (r, ws)=>{
         }
     }
 });
+```
+
+### HTTPS
+
+```
+sf.run({
+    port: 443,
+    hostname: 'locahost',
+    certFile: './cert.pem',
+    keyFile: './cert_key.pem',
+})
 ```
 
 ### Debug

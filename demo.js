@@ -1,14 +1,10 @@
 import sf from './sf.js';
 
 sf.debug = true;
-sf.before = (r) => {
-    console.log(r.headers.get("Origin"));
-};
 sf.wshandle('/ws', async (r, ws)=>{
     for await (var v of ws) {
         if (typeof v === "string") {
             console.log("text", v);
-            throw new Error("fuck")
             await ws.send(v);
         }
         if (v instanceof Uint8Array) {
@@ -17,4 +13,9 @@ sf.wshandle('/ws', async (r, ws)=>{
     }
 });
 
-sf.run();
+sf.run({
+    port: 2020,
+    hostname: 'localhost',
+    certFile: './cert.pem',
+    keyFile: './cert_key.pem',
+});
