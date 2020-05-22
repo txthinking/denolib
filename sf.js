@@ -18,6 +18,10 @@ sf.wshandle = (path, fn) => {
     sf.wshandles[path] = fn;
 };
 
+sf.notfound = (r)=>{
+    return sf.err('404');
+}
+
 sf.ok = (data) => {return{error: null, data}};
 sf.err = (error) => {return{error, data: null}};
 sf.log = (...args) => {
@@ -111,11 +115,19 @@ sf.run = async (options) => {
                 continue;
             }
 
-            var o = sf.err('404');
-            r.respond({
-                headers: new Headers(headers),
-                body: JSON.stringify(o),
-            });
+            try{
+                var o = await sf.notfound(r);
+                r.respond({
+                    headers: new Headers(headers),
+                    body: JSON.stringify(o),
+                });
+            }catch(e){
+                var o = sf.err(e.toString());
+                r.respond({
+                    headers: new Headers(headers),
+                    body: JSON.stringify(o),
+                });
+            }
             r.reply = o;
             sf.log('<=', r.url, o);
             sf.after(r);

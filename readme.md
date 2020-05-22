@@ -14,6 +14,23 @@ A stupid javascript web framework for deno
 * Less design, prefer raw SQL, raw redis commands
 * Javascript, no class, no typescript
 
+### Table of Contents
+
+- [Basic](#basic)
+- [Request](#request-data)
+- [Response](#response-helper)
+- [Websocket](#websocket)
+- [Not Found](#not-found)
+- [Hooks](#before-and-after-hooks)
+- [CORS](#cors)
+- [HTTPS](#https)
+- [Debug](#debug)
+- [Cookie, Session, Token](#cookie-session-no-lets-token)
+- [Database Migration](#database-migrationmysql)
+- [Database Operation](#database-operationmysql)
+- [Redis](#redis)
+- [Cron](#cron)
+
 ### Basic
 
 ```
@@ -45,7 +62,9 @@ sf.handle('/hello', async (r)=>{
 $ curl -v -d '{"hey":"girl"}' http://127.0.0.1:2020/hello?hey=boy
 ```
 
-### Response helper(if you like this fomart)
+### Response helper
+
+> if you like this fomart
 
 ```
 {error: null/string, data: null/object}
@@ -74,7 +93,13 @@ sf.wshandle('/ws', async (r, ws)=>{
 });
 ```
 
-### Before and after hooks
+### Not Found
+
+```
+sf.notfound = (r) => sf.err('404');
+```
+
+### Hooks
 
 ```
 sf.before = (r) => {
@@ -86,6 +111,12 @@ sf.after = (r) => {
 }
 ```
 
+### CORS
+
+```
+sf.cors = '*'; // default '*'
+```
+
 ### HTTPS
 
 ```
@@ -95,12 +126,6 @@ sf.run({
     certFile: './cert.pem',
     keyFile: './cert_key.pem',
 })
-```
-
-### CORS
-
-```
-sf.cors = '*'; // default '*'
 ```
 
 ### Debug
@@ -125,7 +150,7 @@ var uid = kv.decrypt("uid", token, 30*24*60*60); // only allow tokens to be vali
 
 > Just pass the token in query or json body, no magic.
 
-### Database migration(mysql)
+### Database Migration(mysql)
 
 ```
 import {migrate} from 'https://raw.githubusercontent.com/txthinking/sf/master/mod.js';
@@ -152,7 +177,7 @@ await mg("a unique id string", `
 await mg("another unique id string", 'another sql');
 ```
 
-### Database operation(mysql)
+### Database Operation(mysql)
 
 #### Connect
 
@@ -238,6 +263,8 @@ await rds.pipeline((rds)=>{
 });
 ```
 
+> [https://redis.io/topics/pipelining](https://redis.io/topics/pipelining)
+
 #### Transaction
 
 ```
@@ -246,6 +273,8 @@ await rds.transaction((rds)=>{
     rds.exec('set', 'hey', 'sf2');
 });
 ```
+
+> Guarantee atomicity
 
 #### Subscribe
 
@@ -256,7 +285,7 @@ for await (var v of ch.receive()) {
 }
 ```
 
-### Crontab
+### Cron
 
 ```
 import {cron} from 'https://raw.githubusercontent.com/txthinking/sf/master/mod.js';
@@ -269,3 +298,5 @@ cron('* * * * *', ()=>{
     console.log(2)
 });
 ```
+
+> [https://en.wikipedia.org/wiki/Cron](https://en.wikipedia.org/wiki/Cron)
