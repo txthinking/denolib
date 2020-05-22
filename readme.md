@@ -118,8 +118,8 @@ import {ckv} from 'https://raw.githubusercontent.com/txthinking/sf/master/mod.js
 var kv = ckv("abcdefghijklmnopqrstuvwxyz012345"); // pass in a 32 length key
 
 var token = kv.encrypt("uid", 1);
-var uid = kv.decrypt("uid", "token");
-var uid = kv.decrypt("uid", "token", 30*24*60*60); // only allow tokens to be valid for 30 days
+var uid = kv.decrypt("uid", token);
+var uid = kv.decrypt("uid", token, 30*24*60*60); // only allow tokens to be valid for 30 days
 ```
 
 > Just pass the token in query or json body, no magic.
