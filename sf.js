@@ -1,14 +1,11 @@
 import { serve, serveTLS } from "https://deno.land/std/http/server.ts";
-import {
-    acceptWebSocket,
-    isWebSocketCloseEvent,
-    isWebSocketPingEvent,
-} from "https://deno.land/std/ws/mod.ts";
+import { acceptWebSocket } from "https://deno.land/std/ws/mod.ts";
+import { cron } from './cron.js';
 
 var sf = {};
 
 sf.cors = '*';
-sf.debug = false
+sf.debuging = false
 
 sf.before = (r)=>null;
 sf.after = (r)=>null;
@@ -23,17 +20,35 @@ sf.wshandle = (path, fn) => {
 
 sf.ok = (data) => {return{error: null, data}};
 sf.err = (error) => {return{error, data: null}};
-
 sf.log = (...args) => {
-    if(sf.debug){
-        console.log(...args);
+    if(sf.debuging){
+        console.log((new Date()).toString(), ...args);
     }
 }
+sf.register = (name, any) => {
+    if(['cors', 'debug', 'debuging', 'before', 'after', 'handles', 'handle', 'wshandles', 'wshandle', 'ok', 'err', 'log', 'run'].indexOf(name) != -1){
+        throw new Error("Can not register with name "+ name);
+        return;
+    }
+    Object.defineProperty(sf, name, {
+        get: ()=>any,
+    });
+};
+
+Object.defineProperty(sf, 'debug', {
+    get: function(){
+        return this.debuging;
+    },
+    set: function(v){
+        cron(!!v);
+        this.debuging = v;
+    },
+});
 
 sf.run = async (options) => {
-    if(!options.certFile && !options.keyFile){
+    if(!options || typeof options === 'number'){
         var s = serve({
-            port: options.port || 2020,
+            port: options || 2020,
         });
     }else{
         var s = serveTLS({
@@ -45,9 +60,13 @@ sf.run = async (options) => {
     }
     for await (var r of s) {
         sf.before(r);
-        sf.log(r.url);
+        sf.log("=>", r.url);
         r.query = {};
-        r.url.substr(2).split('&').forEach(v => {r.query[v.split('=')[0]] = v.split('=')[1] ? decodeURIComponent(v.split('=')[1]) : '';});
+        var i = r.url.indexOf('?');
+        if(i != -1){
+            r.url.substr(i+1).split('&').forEach(v => {if(v.split('=')[0]) r.query[v.split('=')[0]] = v.split('=')[1] ? decodeURIComponent(v.split('=')[1]) : '';});
+        }
+        sf.log(r.url, "query", r.query);
         r.json = null;
         r.reply = null;
         var headers = {"Content-Type": "application/json"};
@@ -78,7 +97,7 @@ sf.run = async (options) => {
                         body: JSON.stringify(o),
                     });
                     r.reply = o;
-                    sf.log(r.url, "reply", o);
+                    sf.log('<=', r.url, o);
                     sf.after(r);
                     continue;
                 }
@@ -98,13 +117,12 @@ sf.run = async (options) => {
                 body: JSON.stringify(o),
             });
             r.reply = o;
-            sf.log(r.url, "reply", o);
+            sf.log('<=', r.url, o);
             sf.after(r);
             continue
         }
 
         if(r.contentLength){
-            sf.log(r.url, "request body length", r.contentLength);
             var b = new Uint8Array(r.contentLength);
             var buf = b;
             var n = 0;
@@ -116,16 +134,16 @@ sf.run = async (options) => {
                 buf = buf.subarray(i);
             }
             if(n !== r.contentLength){
-                sf.log(r.url, "request body length is", r.contentLength, "but read", n, ", ignored")
+                sf.log(r.url, "body length is", r.contentLength, "but read", n, ", ignored")
             }
             if(n === r.contentLength){
                 try{
                     r.json = JSON.parse(String.fromCharCode.apply(null, b));
                 }catch(e){
-                    sf.log(r.url, "request body is not json, ignored");
+                    sf.log(r.url, "body is not json, ignored");
                 }
                 if(r.json){
-                    sf.log(r.url, "request body", r.json);
+                    sf.log(r.url, "body", r.json);
                 }
             }
         }
@@ -144,9 +162,9 @@ sf.run = async (options) => {
             });
         }
         r.reply = o;
-        sf.log(r.url, "reply", o);
+        sf.log('<=', r.url, o);
         sf.after(r);
     }
 }
 
-export default sf;
+export {sf};
