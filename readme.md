@@ -37,7 +37,7 @@ A stupid javascript web framework for deno
 ### Basic
 
 ```
-import {sf} from 'https://raw.githubusercontent.com/txthinking/sf/master/mod.js';
+import {sf} from 'https://deno.land/x/sf/mod.js';
 
 sf.handle('/', async (r)=>{
     // Must return json parseable result
@@ -142,7 +142,7 @@ sf.debug = true; // default false
 Waiting for [#3403](https://github.com/denoland/deno/issues/3403)
 
 ```
-import {ckv} from 'https://raw.githubusercontent.com/txthinking/sf/master/mod.js';
+import {ckv} from 'https://deno.land/x/sf/mod.js';
 
 var kv = ckv("abcdefghijklmnopqrstuvwxyz012345"); // pass in a 32 length key
 
@@ -156,7 +156,7 @@ var uid = kv.decrypt("uid", token, 30*24*60*60); // only allow tokens to be vali
 ### Database Migration(mysql)
 
 ```
-import {migrate} from 'https://raw.githubusercontent.com/txthinking/sf/master/mod.js';
+import {migrate} from 'https://deno.land/x/sf/mod.js';
 
 var mg = await migrate({
     hostname: "127.0.0.1",
@@ -185,7 +185,7 @@ await mg("another unique id string", 'another sql');
 #### Connect
 
 ```
-import {mysql} from 'https://raw.githubusercontent.com/txthinking/sf/master/mod.js';
+import {mysql} from 'https://deno.land/x/sf/mod.js';
 
 var db = await mysql({
     hostname: "127.0.0.1",
@@ -242,7 +242,7 @@ var r = await db.transaction(async (db)=>{
 #### Connect
 
 ```
-import {redis} from 'https://raw.githubusercontent.com/txthinking/sf/master/mod.js';
+import {redis} from 'https://deno.land/x/sf/mod.js';
 
 var rds = await redis({
     hostname: "127.0.0.1",
@@ -291,7 +291,7 @@ for await (var v of ch.receive()) {
 ### Cron
 
 ```
-import {cron} from 'https://raw.githubusercontent.com/txthinking/sf/master/mod.js';
+import {cron} from 'https://deno.land/x/sf/mod.js';
 
 cron('* * * * *', ()=>{
     console.log(1)
@@ -307,7 +307,7 @@ cron('* * * * *', ()=>{
 ### HTTP Client
 
 ```
-import {http} from 'https://raw.githubusercontent.com/txthinking/sf/master/mod.js';
+import {http} from 'https://deno.land/x/sf/mod.js';
 
 var r = await http('https://httpbin.org/get');
 
@@ -328,6 +328,6 @@ r.formData      // http reponse body if it can be parsed to FromData
 ```
 
 * No default `Content-Type`, make more transparent
-* If `Content-Type` is `application/x-www-form-urlencoded`, will assume body is {} and be parsed to form urlencoded format
-* If `Content-Type` is `application/json`, will assume body is {} and be parsed to json format
+* If `Content-Type` is `application/x-www-form-urlencoded`, will assume body is {}, try parse to form urlencoded
+* If `Content-Type` is `application/json`, will assume body is {}, try parse to json
 * If `body` is `FormData`, `Content-Type: multipart/form-data; boundary=...` will be appended to headers automatically
