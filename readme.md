@@ -40,8 +40,7 @@ A stupid javascript web framework for deno
 import {sf} from 'https://deno.land/x/sf/mod.js';
 
 sf.handle('/', async (r)=>{
-    // Must return json parseable result
-    return { hello: "world" };
+    return { hello: "world" }; // must return json parseable result
 });
 
 sf.run(2020);
@@ -55,9 +54,9 @@ $ curl -v http://127.0.0.1:2020
 
 ```
 sf.handle('/hello', async (r)=>{
-    console.log(r.query); // query object
-    console.log(r.json); // json body object
-    return { hello: "world" };
+    console.log(r.query);       // query object
+    console.log(r.json);        // json body object
+    return { query: r.query, body: r.json };
 });
 ```
 
@@ -70,13 +69,13 @@ $ curl -v -d '{"hey":"girl"}' http://127.0.0.1:2020/hello?hey=boy
 > if you like this fomart
 
 ```
-{error: null/string, data: null/object}
+{error: null/string, data: null/any}
 ```
 
 ```
 sf.handle('/hello', async (r)=>{
     return sf.err('a error string');
-    return sf.ok({ hello: "world" });
+    return sf.ok(['hello', 'world']);
 });
 ```
 
@@ -117,7 +116,7 @@ sf.after = (r) => {
 ### CORS
 
 ```
-sf.cors = '*'; // default '*'
+sf.cors = '*';
 ```
 
 ### HTTPS
@@ -134,7 +133,7 @@ sf.run({
 ### Debug
 
 ```
-sf.debug = true; // default false
+sf.debug = true;
 ```
 
 ### Cookie? Session? No. Let's Token
@@ -148,7 +147,7 @@ var kv = ckv("abcdefghijklmnopqrstuvwxyz012345"); // pass in a 32 length key
 
 var token = kv.encrypt("uid", 1);
 var uid = kv.decrypt("uid", token);
-var uid = kv.decrypt("uid", token, 30*24*60*60); // only allow tokens to be valid for 30 days
+var uid = kv.decrypt("uid", token, 30*24*60*60); // only allow token to be valid for 30 days
 ```
 
 > Just pass the token in query or json body, no magic.
@@ -163,15 +162,15 @@ var mg = await migrate({
     port: 3306,
     username: "root",
     password: "111111",
-    db: "sf", // Don't need to create database manually
+    db: "sf", // don't need to create database manually
 });
 
 // Each unique id execute at most once
 await mg("a unique id string", `
     CREATE TABLE user (
-        -- Must set auto increment primary key: id, if you want to use CURD methods below
+        -- must set auto increment primary key: id, if you want to use CURD methods below
         id int(10) unsigned NOT NULL AUTO_INCREMENT,
-        -- Recommend set not null and default value for each field
+        -- recommend set not null and default value for each field
         email varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL default '',
         PRIMARY KEY (id)
     ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
