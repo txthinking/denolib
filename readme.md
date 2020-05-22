@@ -21,7 +21,7 @@ A stupid javascript web framework for deno
 - [Response](#response-helper)
 - [Websocket](#websocket)
 - [Not Found](#not-found)
-- [Hooks](#before-and-after-hooks)
+- [Hooks](#hooks)
 - [CORS](#cors)
 - [HTTPS](#https)
 - [Debug](#debug)
