@@ -78,9 +78,10 @@ sf.wshandle('/ws', async (r, ws)=>{
 
 ```
 sf.before = (r) => {
-    console.log(r)
+    console.log('if you want to do something before handle, do it here')
 }
 sf.after = (r) => {
+    console.log('if you want to do something after handle, do it here')
     console.log(r, r.query, r.json, r.reply)
 }
 ```
