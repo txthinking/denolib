@@ -200,15 +200,10 @@ var db = await mysql({
 
 ```
 // table name and row object, keys must match table fields or less
-var row = await db.c('user', {
-    email: 'hi@sf.com',
-});
+var row = await db.c('user', {email: 'hi@sf.com'});
 
 // object keys must match table fields or less and must contain id
-var row = await db.u('user', {
-    id: 1,
-    email: 'hey@sf.com',
-});
+var row = await db.u('user', {id: 1, email: 'hey@sf.com'});
 
 // pass in id
 var row = await db.r('user', 1);

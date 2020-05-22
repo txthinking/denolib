@@ -5,12 +5,7 @@ var r = await http('https://httpbin.org/post?a=1', {
     query: {
         hello: 'world',
     },
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: {
-        a: 1,
-    },
+    body: new FormData(),
 });
 
 console.log(r);
