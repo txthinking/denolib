@@ -146,6 +146,7 @@ sf.run = async (options) => {
         });
     }
     for await (var r of s) {
+        // I like to catch errors in the process, this allows me to understand the process better, but there may still be omissions
         handle(r).catch(console.error);
     }
 }

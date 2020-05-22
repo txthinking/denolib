@@ -6,12 +6,14 @@ A stupid javascript web framework for deno
 
 * Don't care HTTP status code, method and header
 * Don't care cookie and session concepts
+* Forget RESTful, just one path do one thing
 * Only handle query key with one value
 * If there is a body, should be json parseable
 * Always respond json body
 * No middlewares, no wildcard route, no group route
 * Recommand auto increment primary id for mysql table
 * Less design, prefer raw SQL, raw redis commands
+* A HTTP client with concepts of HTTP protocol
 * Javascript, no class, no typescript
 
 ### Table of Contents
@@ -30,6 +32,7 @@ A stupid javascript web framework for deno
 - [Database Operation](#database-operationmysql)
 - [Redis](#redis)
 - [Cron](#cron)
+- [HTTP Client](#http-client)
 
 ### Basic
 
@@ -300,3 +303,31 @@ cron('* * * * *', ()=>{
 ```
 
 > [https://en.wikipedia.org/wiki/Cron](https://en.wikipedia.org/wiki/Cron)
+
+### HTTP Client
+
+```
+import {http} from 'https://raw.githubusercontent.com/txthinking/sf/master/mod.js';
+
+var r = await http('https://httpbin.org/get');
+
+var r = await http('https://httpbin.org/post?a=1', {
+    method: 'POST',                                // http request method
+    query: {b: 2},                                 // http request query, will append to the url
+    headers: {'Content-Type': 'application/json'}, // http requset headers
+    body: {c: 3},                                  // http request body, can be {}, string, FormData, ArrayBuffer
+}));
+
+r.status        // http response status code, int
+r.headers       // http response headers, {}
+
+r.text          // http reponse body text plain
+r.json          // http reponse body if it can be parsed to json
+r.arrayBuffer   // http reponse body if it can be parsed to array buffer
+r.formData      // http reponse body if it can be parsed to FromData
+```
+
+* No default `Content-Type`, make more transparent
+* If `Content-Type` is `application/x-www-form-urlencoded`, will assume body is {} and be parsed to form urlencoded format
+* If `Content-Type` is `application/json`, will assume body is {} and be parsed to json format
+* If `body` is `FormData`, `Content-Type: multipart/form-data; boundary=...` will be appended to headers automatically

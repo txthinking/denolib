@@ -1,9 +1,17 @@
-import {sf, migrate, mysql, cron, redis} from './mod.js';
+import {sf, migrate, mysql, cron, redis, http} from './mod.js';
 
-sf.debug = true;
-
-sf.handle('/', async (r)=>{
-    return sf.ok({ query: r.query, json: r.json });
+var r = await http('https://httpbin.org/post?a=1', {
+    method: 'POST',
+    query: {
+        hello: 'world',
+    },
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: {
+        a: 1,
+    },
 });
 
-sf.run(2020);
+console.log(r);
+
