@@ -1,5 +1,6 @@
 import { serve, serveTLS } from "https://deno.land/std/http/server.ts";
 import { acceptWebSocket } from "https://deno.land/std/ws/mod.ts";
+import { BufReader } from "https://deno.land/std/io/bufio.ts";
 import { cron } from './cron.js';
 
 var sf = {};
@@ -97,31 +98,23 @@ var handle = async (r) => {
         return;
     }
 
-    if(r.contentLength){
+    if(r.contentLength !== null){
         var b = new Uint8Array(r.contentLength);
-        var buf = b;
-        var n = 0;
-        for(;;) {
-            var i = await r.body.read(buf);
-            if (i === null) break;
-            n += i;
-            if (n >= r.contentLength) break;
-            buf = buf.subarray(i);
+        var br = await new BufReader(r.body);
+        var b1 = await br.readFull(b);
+        if (b1 === null){
+            log(r.url, "body length is", r.contentLength, "but read 0, ignored")
+            return;
         }
-        if(n !== r.contentLength){
-            log(r.url, "body length is", r.contentLength, "but read", n, ", ignored")
+        r.uint8Array = b;
+        try{
+            r.json = JSON.parse(new TextDecoder().decode(b));
+        }catch(e){
+            log(r.url, "body is not json, you can read it from r.unit8Array");
         }
-        if(n === r.contentLength){
-            r.uint8Array = b;
-            try{
-                r.json = JSON.parse(String.fromCharCode.apply(null, b));
-            }catch(e){
-                log(r.url, "body is not json, you can read it from r.unit8Array");
-            }
-            if(r.json){
-                log(r.url, "body", r.json);
-            }
-        }
+    }
+    if(r.json){
+        log(r.url, "body", r.json);
     }
 
     try{
