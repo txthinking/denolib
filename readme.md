@@ -7,12 +7,12 @@ A stupid javascript web framework for deno
 * Don't care http status code, method and header
 * Don't care cookie and session concepts
 * Forget RESTful, just one path do one thing
-* Only handle one query key with one value, `?a=1&a=2` to `{a:2}`
+* Default to handle query one key with one value, `?a=1&a=2` to `{a:2}`
 * Default to handle json body of http request
 * Default to respond json body
 * No middlewares, no wildcard route, no group route
 * Less design, prefer raw SQL, raw redis commands
-* A HTTP client with concepts of HTTP protocol
+* A http client with concepts of http protocol
 * Javascript, no class, no typescript
 
 ### Table of Contents
@@ -22,7 +22,7 @@ A stupid javascript web framework for deno
 - [Response](#response-helper)
 - [Websocket](#websocket)
 - [Not Found](#not-found)
-- [Request and Custom Response](#request-custom-response)
+- [Request and Custom Response](#request-and-custom-response)
 - [Hooks](#hooks)
 - [CORS](#cors)
 - [HTTPS](#https)
@@ -128,7 +128,7 @@ sf.before = (r) => {
 }
 sf.after = (r) => {
     console.log('if you want to do something after handle, do it here')
-    console.log(r, r.query, r.json, r.reply)
+    console.log(r, r.query, r.json, r.response)
 }
 ```
 
@@ -187,9 +187,7 @@ var mg = await migrate({
 // Each unique id execute at most once
 await mg("a unique id string", `
     CREATE TABLE user (
-        -- must set auto increment primary key: id, if you want to use CURD methods below
         id int(10) unsigned NOT NULL AUTO_INCREMENT,
-        -- recommend set not null and default value for each field
         email varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL default '',
         PRIMARY KEY (id)
     ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
@@ -216,6 +214,11 @@ var db = await mysql({
 ```
 
 #### CURD
+
+If you want to use this four methods:
+
+* Must set auto increment primary key: id
+* Recommend set not null and default value for each field
 
 ```
 // table name and row object, keys must match table fields or less
