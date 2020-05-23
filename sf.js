@@ -16,6 +16,8 @@ sf.wshandle = (path, f) => sf.wshandles[path] = f
 sf.ok = (data) => { return {error: null, data} };
 sf.err = (error) => { return {error, data: null} };
 sf.notfound = (r)=>sf.err('404')
+function response(o){this.o={status: o.status, headers: new Headers(o.headers), body: o.body};}
+sf.response = (o)=> new response(o)
 
 var debug = false;
 Object.defineProperty(sf, 'debug', {
@@ -35,7 +37,8 @@ var handle = async (r) => {
 
     r.query = {};
     r.json = null;
-    r.reply = null;
+    r.uint8Array = null;
+    r.response = null;
 
     var i = r.url.indexOf('?');
     if(i != -1){
@@ -59,12 +62,12 @@ var handle = async (r) => {
         if(!wsh){
             try{
                 var o = await sf.notfound(r);
-                r.respond({headers: new Headers(headers), body: JSON.stringify(o)});
+                r.respond(o instanceof response ? o.o : {headers: new Headers(headers), body: JSON.stringify(o)});
             }catch(e){
                 var o = sf.err(e.toString());
-                r.respond({headers: new Headers(headers), body: JSON.stringify(o)});
+                r.respond(o instanceof response ? o.o : {headers: new Headers(headers), body: JSON.stringify(o)});
             }
-            r.reply = o;
+            r.response = o;
             log('<=', r.url, o);
             sf.after(r);
             return;
@@ -78,8 +81,8 @@ var handle = async (r) => {
             });
         } catch (e) {
             var o = sf.err(e.toString());
-            r.respond({headers: new Headers(headers), body: JSON.stringify(o)});
-            r.reply = o;
+            r.respond(o instanceof response ? o.o : {headers: new Headers(headers), body: JSON.stringify(o)});
+            r.response = o;
             log('<=', r.url, o);
             sf.after(r);
             return;
@@ -109,10 +112,11 @@ var handle = async (r) => {
             log(r.url, "body length is", r.contentLength, "but read", n, ", ignored")
         }
         if(n === r.contentLength){
+            r.uint8Array = b;
             try{
                 r.json = JSON.parse(String.fromCharCode.apply(null, b));
             }catch(e){
-                log(r.url, "body is not json, ignored", e);
+                log(r.url, "body is not json, you can read it from r.unit8Array");
             }
             if(r.json){
                 log(r.url, "body", r.json);
@@ -122,12 +126,12 @@ var handle = async (r) => {
 
     try{
         var o = await h(r);
-        r.respond({headers: new Headers(headers), body: JSON.stringify(o)});
+        r.respond(o instanceof response ? o.o : {headers: new Headers(headers), body: JSON.stringify(o)});
     }catch(e){
         var o = sf.err(e.toString());
-        r.respond({headers: new Headers(headers), body: JSON.stringify(o)});
+        r.respond(o instanceof response ? o.o : {headers: new Headers(headers), body: JSON.stringify(o)});
     }
-    r.reply = o;
+    r.response = o;
     log('<=', r.url, o);
     sf.after(r);
 }

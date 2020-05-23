@@ -4,14 +4,13 @@ A stupid javascript web framework for deno
 
 ### How stupid
 
-* Don't care HTTP status code, method and header
+* Don't care http status code, method and header
 * Don't care cookie and session concepts
 * Forget RESTful, just one path do one thing
-* Only handle query key with one value
-* If there is a body, should be json parseable
-* Always respond json body
+* Only handle one query key with one value, `?a=1&a=2` to `{a:2}`
+* Default to handle json body of http request
+* Default to respond json body
 * No middlewares, no wildcard route, no group route
-* Recommand auto increment primary id for mysql table
 * Less design, prefer raw SQL, raw redis commands
 * A HTTP client with concepts of HTTP protocol
 * Javascript, no class, no typescript
@@ -23,6 +22,7 @@ A stupid javascript web framework for deno
 - [Response](#response-helper)
 - [Websocket](#websocket)
 - [Not Found](#not-found)
+- [Request and Custom Response](#request-custom-response)
 - [Hooks](#hooks)
 - [CORS](#cors)
 - [HTTPS](#https)
@@ -50,7 +50,7 @@ sf.run(2020);
 $ curl -v http://127.0.0.1:2020
 ```
 
-### Request data
+### Request Data
 
 ```
 sf.handle('/hello', async (r)=>{
@@ -64,7 +64,7 @@ sf.handle('/hello', async (r)=>{
 $ curl -v -d '{"hey":"girl"}' http://127.0.0.1:2020/hello?hey=boy
 ```
 
-### Response helper
+### Response Helper
 
 > if you like this fomart
 
@@ -99,6 +99,25 @@ sf.wshandle('/ws', async (r, ws)=>{
 
 ```
 sf.notfound = (r) => sf.err('404');
+```
+
+### Request and Custom Response
+
+```
+sf.handle('/hello', async (r)=>{
+    // r.url           // http request url
+    // r.method        // http request method
+    // r.headers       // http request headers
+    // r.query         // http request query object, (url parameters)
+    // r.json          // http request json body object
+    // r.uint8Array    // http request body binary, Uint8Array
+
+    return sf.response({
+        status: 200,                                            // any http status code
+        headers: {'Content-Type': 'text/plain; charset=utf-8'}, // any headers you want to respond
+        body: 'hello sf!',                                      // body can be string, Uint8Array or Reader
+    });
+});
 ```
 
 ### Hooks
@@ -312,13 +331,13 @@ var r = await http('https://httpbin.org/post?a=1', {
     body: {c: 3},                                  // http request body, can be {}, string, FormData, ArrayBuffer
 }));
 
-r.status        // http response status code, int
-r.headers       // http response headers, {}
+// r.status        // http response status code, int
+// r.headers       // http response headers, {}
 
-r.text          // http reponse body text plain
-r.json          // http reponse body if it can be parsed to json
-r.arrayBuffer   // http reponse body if it can be parsed to array buffer
-r.formData      // http reponse body if it can be parsed to FromData
+// r.text          // http reponse body text plain
+// r.json          // http reponse body if it can be parsed to json
+// r.arrayBuffer   // http reponse body if it can be parsed to array buffer
+// r.formData      // http reponse body if it can be parsed to FromData
 ```
 
 * No default `Content-Type`, make more transparent
