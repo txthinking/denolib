@@ -173,6 +173,8 @@ var uid = kv.decrypt("uid", token, 30*24*60*60); // only allow token to be valid
 
 ### Database Migration(mysql)
 
+TODO: Support caching_sha2_password auth plugin (mysql8 default)
+
 ```
 import {migrate} from 'https://deno.land/x/sf/mod.js';
 
@@ -199,6 +201,8 @@ await mg("another unique id string", 'another sql');
 ### Database Operation(mysql)
 
 #### Connect
+
+TODO: Support caching_sha2_password auth plugin (mysql8 default)
 
 ```
 import {mysql} from 'https://deno.land/x/sf/mod.js';
