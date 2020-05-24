@@ -118,6 +118,18 @@ sf.handle('/hello', async (r)=>{
         headers: {'Content-Type': 'text/plain; charset=utf-8'}, // any headers you want to respond
         body: 'hello sf!',                                      // body can be string, Uint8Array or Reader
     });
+
+    return sf.response({
+        status: 200,
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({hey: 'sf'}),
+    });
+
+    return sf.response({
+        status: 200,
+        headers: {'Content-Type': 'application/octet-stream'},
+        body: Uint8Array.from([1,2,3,4]),
+    });
 });
 ```
 
@@ -327,17 +339,47 @@ cron('* * * * *', ()=>{
 
 ### HTTP Client
 
+>  No default `Content-Type`, make more transparent
+
 ```
 import {http} from 'https://deno.land/x/sf/mod.js';
 
 var r = await http('https://httpbin.org/get');
 
 var r = await http('https://httpbin.org/post?a=1', {
-    method: 'POST',                                // http request method
-    query: {b: 2},                                 // http request query, will append to the url
-    headers: {'Content-Type': 'application/json'}, // http requset headers
-    body: {c: 3},                                  // http request body, can be {}, string, Uint8Array, FormData
-}));
+    method: 'POST',                                         // http request method
+    query: {b: 2},                                          // http request query, will append to the url
+    headers: {'Content-Type': 'text/plain; charset=utf-8'}, // http request headers
+    body: 'hey sf!',                                        // http request body, can be string, Uint8Array, FormData
+});
+
+var r = await http('https://httpbin.org/post?a=1', {
+    method: 'POST',
+    query: {b: 2},
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({hey: 'sf'}),
+});
+
+var r = await http('https://httpbin.org/post?a=1', {
+    method: 'POST',
+    query: {b: 2},
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    body: new URLSearchParams({hey: 'sf'}).toString(),
+});
+
+// see issue #1
+var r = await http('https://httpbin.org/post?a=1', {
+    method: 'POST',
+    query: {b: 2},
+    headers: {'Content-Type': 'application/octet-stream'},
+    body: Uint8Array.from([1,2,3,4]),
+});
+
+var r = await http('https://httpbin.org/post?a=1', {
+    method: 'POST',
+    query: {b: 2},
+    body: new FormData(), // Content-Type: multipart/form-data; boundary=... will be appended to headers automatically
+});
 
 // r.status        // http response status code, int
 // r.headers       // http response headers, {}
@@ -345,10 +387,5 @@ var r = await http('https://httpbin.org/post?a=1', {
 // r.uint8Array    // http reponse body binary, Unit8Array
 // r.text          // http reponse body text plain
 // r.json          // http reponse body if it can be parsed to json
-// r.formData      // http reponse body if it can be parsed to FromData
+// r.formData      // http reponse body if it can be parsed to FromData // see issue #2
 ```
-
-* No default `Content-Type`, make more transparent
-* If `Content-Type` is `application/x-www-form-urlencoded`, will try to parse body to form urlencoded
-* If `Content-Type` is `application/json`, will try to parse body to json
-* If `body` is `FormData`, `Content-Type: multipart/form-data; boundary=...` will be appended to headers automatically

@@ -11,25 +11,10 @@ var http = async (url, options)=>{
     u.search = q.toString();
 
     var body = options.body;
-    if(options.headers && !(body instanceof FormData)){
-        for(var k in options.headers){
-            if(k.toLowerCase() != 'content-type'){
-                continue;
-            }
-            if(options.headers[k].startsWith('application/x-www-form-urlencoded')){
-                body = new URLSearchParams(options.body);
-                break
-            }
-            if(options.headers[k].startsWith('application/json')){
-                body = JSON.stringify(body);
-                break;
-            }
-        }
-    }
     if(body instanceof Uint8Array){
-        body = body.buffer;
+        // body = body.buffer;
         // care offset
-        // body = body.buffer.slice(body.byteOffset, body.byteLength + body.byteOffset);
+        body = body.buffer.slice(body.byteOffset, body.byteLength + body.byteOffset);
     }
 
     var r = await fetch(u.toString(), {
@@ -43,7 +28,7 @@ var http = async (url, options)=>{
     }
 
     var ab = await r.arrayBuffer();
-    var o = {
+    return {
         status: r.status,
         headers: h,
 
@@ -52,7 +37,6 @@ var http = async (url, options)=>{
         json: await r.json().catch(e=>null),
         formData: await r.formData().catch(e=>null),
     };
-    return o;
 };
 
 export {http};

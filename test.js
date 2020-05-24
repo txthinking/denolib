@@ -1,8 +1,7 @@
 import {sf, migrate, mysql, cron, redis, http} from './mod.js';
 
-sf.handle('/', async (r)=>{
-    console.log(r.uint8Array);
-    return { hello: "world" }; // must return json parseable result
+var r = await fetch("https://httpbin.org/post", {
+    method: "POST",
+    body: new ArrayBuffer(),
 });
-
-sf.run(2020);
+console.log(r);
