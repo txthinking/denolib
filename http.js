@@ -26,6 +26,11 @@ var http = async (url, options)=>{
             }
         }
     }
+    if(body instanceof Uint8Array){
+        body = body.buffer;
+        // care offset
+        // body = body.buffer.slice(body.byteOffset, body.byteLength + body.byteOffset);
+    }
 
     var r = await fetch(u.toString(), {
         method: options.method,
@@ -36,15 +41,18 @@ var http = async (url, options)=>{
     for (var l of r.headers.entries()) {
         h[l[0]] = l[1];
     }
-    return {
+
+    var ab = await r.arrayBuffer();
+    var o = {
         status: r.status,
         headers: h,
 
-        arrayBuffer: await r.arrayBuffer(),
+        uint8Array: new Uint8Array(ab, 0, ab.byteLength),
         text: await r.text(),
         json: await r.json().catch(e=>null),
         formData: await r.formData().catch(e=>null),
     };
+    return o;
 };
 
 export {http};

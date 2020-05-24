@@ -13,6 +13,7 @@ A stupid javascript web framework for deno
 * No middlewares, no wildcard route, no group route
 * Less design, prefer raw SQL, raw redis commands
 * A http client with concepts of http protocol
+* Recommend for api server, separate upload server and static server
 * Javascript, no class, no typescript
 
 ### Table of Contents
@@ -335,19 +336,19 @@ var r = await http('https://httpbin.org/post?a=1', {
     method: 'POST',                                // http request method
     query: {b: 2},                                 // http request query, will append to the url
     headers: {'Content-Type': 'application/json'}, // http requset headers
-    body: {c: 3},                                  // http request body, can be {}, string, FormData, ArrayBuffer
+    body: {c: 3},                                  // http request body, can be {}, string, Uint8Array, FormData
 }));
 
 // r.status        // http response status code, int
 // r.headers       // http response headers, {}
 
+// r.uint8Array    // http reponse body binary, Unit8Array
 // r.text          // http reponse body text plain
 // r.json          // http reponse body if it can be parsed to json
-// r.arrayBuffer   // http reponse body if it can be parsed to array buffer
 // r.formData      // http reponse body if it can be parsed to FromData
 ```
 
 * No default `Content-Type`, make more transparent
-* If `Content-Type` is `application/x-www-form-urlencoded`, will assume body is {}, try parse to form urlencoded
-* If `Content-Type` is `application/json`, will assume body is {}, try parse to json
+* If `Content-Type` is `application/x-www-form-urlencoded`, will try to parse body to form urlencoded
+* If `Content-Type` is `application/json`, will try to parse body to json
 * If `body` is `FormData`, `Content-Type: multipart/form-data; boundary=...` will be appended to headers automatically

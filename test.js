@@ -1,10 +1,8 @@
 import {sf, migrate, mysql, cron, redis, http} from './mod.js';
 
-sf.debug = true;
-
-sf.handle('/hello', async (r)=>{
+sf.handle('/', async (r)=>{
     console.log(r.uint8Array);
-    return [];
+    return { hello: "world" }; // must return json parseable result
 });
 
 sf.run(2020);
