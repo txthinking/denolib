@@ -367,7 +367,6 @@ var r = await http('https://httpbin.org/post?a=1', {
     body: new URLSearchParams({hey: 'sf'}).toString(),
 });
 
-// see issue #1
 var r = await http('https://httpbin.org/post?a=1', {
     method: 'POST',
     query: {b: 2},
