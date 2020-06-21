@@ -4,4 +4,4 @@ sf.handle('/', async (r)=>{
     return r.conn;
 });
 
-sf.run();
+sf.run(6666);
