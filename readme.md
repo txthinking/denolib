@@ -4,108 +4,70 @@ A stupid javascript web framework for deno
 
 ### How stupid
 
-* Don't care http status code, method and header
-* Don't care cookie and session concepts
-* Forget RESTful, just one path do one thing
-* Default to handle query one key with one value, `?a=1&a=2` to `{a:2}`
-* Default to handle json body of http request
-* Default to respond json body
-* No middlewares, no wildcard route, no group route
-* Less design, prefer raw SQL, raw redis commands
-* A http client with concepts of http protocol
-* Recommend for api server, separate upload server and static server
-* Javascript, no class, no typescript
+sf tries to ignore concepts: HTTP method, cookie, session and prefers JSON format data.
+sf recommends to separate api server, upload server and static server.
+If you are very familiar with the HTTP protocol and like simple, you may like sf, otherwise you may not like sf.
 
 ### Table of Contents
 
 - [Basic](#basic)
-- [Request](#request-data)
-- [Response](#response-helper)
-- [Websocket](#websocket)
-- [Not Found](#not-found)
-- [Request and Custom Response](#request-and-custom-response)
-- [Hooks](#hooks)
-- [CORS](#cors)
-- [HTTPS](#https)
-- [Debug](#debug)
-- [Cookie, Session, Token](#cookie-session-no-lets-token)
-- [Database Migration](#database-migrationmysql)
-- [Database Operation](#database-operationmysql)
-- [Redis](#redis)
-- [Cron](#cron)
-- [HTTP Client](#http-client)
+    - [Websocket](#websocket)
+    - [Not Found](#not-found)
+- [Advanced](#advanced)
+    - [Hooks](#hooks)
+    - [CORS](#cors)
+    - [HTTPS](#https)
+    - [Debug](#debug)
+    - [Cookie, Session, Token](#cookie-session-no-lets-token)
+- [Database](#database)
+    - [Database Migration](#database-migrationmysql)
+    - [Database Operation](#database-operationmysql)
+    - [Redis](#redis)
+- [Utils](#utils)
+    - [Cron](#cron)
+    - [HTTP Client](#http-client)
 
-### Basic
+## Basic
 
 ```
 import {sf} from 'https://deno.land/x/sf/mod.js';
 
-sf.handle('/', async (r)=>{
-    return { hello: "world" }; // must return json parseable result
+sf.path('/', async (r)=>{
+    return { query: r.query, body: r.json };
 });
 
 sf.run(2020);
 ```
 
 ```
-$ curl -v http://127.0.0.1:2020
+$ curl -v -d '{"hey":"girl"}' http://127.0.0.1:2020/?hey=boy
 ```
 
-### Request Data
+#### Websocket
 
 ```
-sf.handle('/hello', async (r)=>{
-    console.log(r.query);       // query object
-    console.log(r.json);        // json body object
-    return { query: r.query, body: r.json };
-});
-```
-
-```
-$ curl -v -d '{"hey":"girl"}' http://127.0.0.1:2020/hello?hey=boy
-```
-
-### Response Helper
-
-> if you like this fomart
-
-```
-{error: null/string, data: null/any}
-```
-
-```
-sf.handle('/hello', async (r)=>{
-    return sf.err('a error string');
-    return sf.ok(['hello', 'world']);
-});
-```
-
-### Websocket
-
-```
-sf.wshandle('/ws', async (r, ws)=>{
+sf.wspath('/ws', async (r, ws)=>{
     for await (var v of ws) {
         if (typeof v === "string") {
-            console.log("text", v);
             await ws.send(v);
         }
         if (v instanceof Uint8Array) {
-            console.log("binary", v);
+            await ws.send(v);
         }
     }
 });
 ```
 
-### Not Found
+#### Not Found
 
 ```
-sf.notfound = (r) => sf.err('404');
+sf.notfound = (r) => {error: 404}
 ```
 
-### Request and Custom Response
+## Advanced
 
 ```
-sf.handle('/hello', async (r)=>{
+sf.path('/hello', async (r)=>{
     // r.url           // http request url
     // r.method        // http request method
     // r.headers       // http request headers
@@ -133,7 +95,7 @@ sf.handle('/hello', async (r)=>{
 });
 ```
 
-### Hooks
+#### Hooks
 
 ```
 sf.before = (r) => {
@@ -145,13 +107,13 @@ sf.after = (r) => {
 }
 ```
 
-### CORS
+#### CORS
 
 ```
 sf.cors = '*';
 ```
 
-### HTTPS
+#### HTTPS
 
 ```
 sf.run({
@@ -162,13 +124,13 @@ sf.run({
 })
 ```
 
-### Debug
+#### Debug
 
 ```
 sf.debug = true;
 ```
 
-### Cookie? Session? No. Let's Token
+#### Cookie? Session? No. Let's Token
 
 Waiting for [#3403](https://github.com/denoland/deno/issues/3403)
 
@@ -184,7 +146,9 @@ var uid = kv.decrypt("uid", token, 30*24*60*60); // only allow token to be valid
 
 > Just pass the token in query or json body, no magic.
 
-### Database Migration(mysql)
+## Database
+
+#### Database Migration(mysql)
 
 TODO: Support caching_sha2_password auth plugin (mysql8 default)
 
@@ -211,9 +175,9 @@ await mg("a unique id string", `
 await mg("another unique id string", 'another sql');
 ```
 
-### Database Operation(mysql)
+#### Database Operation(mysql)
 
-#### Connect
+**Connect**
 
 TODO: Support caching_sha2_password auth plugin (mysql8 default)
 
@@ -230,7 +194,7 @@ var db = await mysql({
 });
 ```
 
-#### CURD
+**CURD**
 
 If you want to use this four methods:
 
@@ -251,14 +215,14 @@ var row = await db.r('user', 1);
 await db.d('user', 1);
 ```
 
-#### Raw SQL
+**Raw SQL**
 
 ```
 var rows = await db.query('select * from user where id=?', [1]);
 await db.execute('update user set email=? where id=?', ['hi@sf.com', 1]);
 ```
 
-#### Transaction
+**Transaction**
 
 ```
 var r = await db.transaction(async (db)=>{
@@ -270,9 +234,9 @@ var r = await db.transaction(async (db)=>{
 });
 ```
 
-### Redis
+#### Redis
 
-#### Connect
+**Connect**
 
 ```
 import {redis} from 'https://deno.land/x/sf/mod.js';
@@ -283,14 +247,14 @@ var rds = await redis({
 });
 ```
 
-#### Raw commands
+**Raw commands**
 
 ```
 var r = await rds.exec('set', 'hi', 'sf');
 var r = await rds.exec('get', 'hi');
 ```
 
-#### Pipeline
+**Pipeline**
 
 ```
 await rds.pipeline((rds)=>{
@@ -301,7 +265,7 @@ await rds.pipeline((rds)=>{
 
 > [https://redis.io/topics/pipelining](https://redis.io/topics/pipelining)
 
-#### Transaction
+**Transaction**
 
 ```
 await rds.transaction((rds)=>{
@@ -312,7 +276,7 @@ await rds.transaction((rds)=>{
 
 > Guarantee atomicity
 
-#### Subscribe
+**Subscribe**
 
 ```
 var ch = await rds.subscribe('channel');
@@ -321,7 +285,9 @@ for await (var v of ch.receive()) {
 }
 ```
 
-### Cron
+## Utils
+
+#### Cron
 
 ```
 import {cron} from 'https://deno.land/x/sf/mod.js';
@@ -337,7 +303,7 @@ cron('* * * * *', ()=>{
 
 > [https://en.wikipedia.org/wiki/Cron](https://en.wikipedia.org/wiki/Cron)
 
-### HTTP Client
+#### HTTP Client
 
 >  No default `Content-Type`, make more transparent
 

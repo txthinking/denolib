@@ -9,14 +9,21 @@ sf.cors = '*';
 
 sf.before = (r)=>null;
 sf.after = (r)=>null;
-sf.handles = {};
-sf.handle = (path, f) => sf.handles[path] = f
-sf.wshandles = {};
-sf.wshandle = (path, f) => sf.wshandles[path] = f
+
+sf.handler = {};
+sf.path = (path, f) => sf.handler[path] = f
+// TODO remove
+sf.handle = sf.path
+
+sf.wshandler = {};
+sf.wspath = (path, f) => sf.wshandler[path] = f
+// TODO remove
+sf.wshandle = sf.wspath
 
 sf.ok = (data) => { return {error: null, data} };
 sf.err = (error) => { return {error, data: null} };
 sf.notfound = (r)=>sf.err('404')
+
 function response(o){this.o={status: o.status, headers: new Headers(o.headers), body: o.body};}
 sf.response = (o)=> new response(o)
 
@@ -57,9 +64,9 @@ var handle = async (r) => {
         headers["Access-Control-Max-Age"] = 24*60*60;
     }
 
-    var h = sf.handles[r.url.split('?')[0]];
+    var h = sf.handler[r.url.split('?')[0]];
     if(!h){
-        var wsh = sf.wshandles[r.url.split('?')[0]];
+        var wsh = sf.wshandler[r.url.split('?')[0]];
         if(!wsh){
             try{
                 var o = await sf.notfound(r);
