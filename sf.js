@@ -1,7 +1,7 @@
 import { serve, serveTLS } from "https://deno.land/std/http/server.ts";
 import { acceptWebSocket } from "https://deno.land/std/ws/mod.ts";
 import { BufReader } from "https://deno.land/std/io/bufio.ts";
-import { cron } from './cron.js';
+// import { cron } from './cron.js';
 
 var sf = {};
 
@@ -33,7 +33,7 @@ Object.defineProperty(sf, 'debug', {
         return debug;
     },
     set: function(v){
-        cron(!!v);
+        // cron(!!v);
         debug = v;
     },
 });
