@@ -1,4 +1,4 @@
-import {sf, migrate, mysql, cron, redis, http} from './mod.js';
+import {sf, migrate, mysql, redis, http} from './mod.js';
 
 sf.path('/', async (r)=>{
     var h = {};
@@ -6,7 +6,7 @@ sf.path('/', async (r)=>{
         h[v[0]] = v[1];
     }
     return {
-        conn: r.conn,
+        ip: r.conn.localAddr,
         query: r.query,
         json: r.json,
         headers: h,

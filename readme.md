@@ -30,7 +30,7 @@ If you are very familiar with the HTTP protocol and like simple, you may like sf
 ## Basic
 
 ```
-import {sf} from 'https://deno.land/x/sf/mod.js';
+import {sf} from 'https://git.io/mod.js';
 
 sf.path('/', async (r)=>{
     return { query: r.query, body: r.json };
@@ -135,7 +135,7 @@ sf.debug = true;
 Waiting for [#3403](https://github.com/denoland/deno/issues/3403)
 
 ```
-import {ckv} from 'https://deno.land/x/sf/mod.js';
+import {ckv} from 'https://git.io/mod.js';
 
 var kv = ckv("abcdefghijklmnopqrstuvwxyz012345"); // pass in a 32 length key
 
@@ -153,7 +153,7 @@ var uid = kv.decrypt("uid", token, 30*24*60*60); // only allow token to be valid
 TODO: Support caching_sha2_password auth plugin (mysql8 default)
 
 ```
-import {migrate} from 'https://deno.land/x/sf/mod.js';
+import {migrate} from 'https://git.io/mod.js';
 
 var mg = await migrate({
     hostname: "127.0.0.1",
@@ -182,7 +182,7 @@ await mg("another unique id string", 'another sql');
 TODO: Support caching_sha2_password auth plugin (mysql8 default)
 
 ```
-import {mysql} from 'https://deno.land/x/sf/mod.js';
+import {mysql} from 'https://git.io/mod.js';
 
 var db = await mysql({
     hostname: "127.0.0.1",
@@ -239,7 +239,7 @@ var r = await db.transaction(async (db)=>{
 **Connect**
 
 ```
-import {redis} from 'https://deno.land/x/sf/mod.js';
+import {redis} from 'https://git.io/mod.js';
 
 var rds = await redis({
     hostname: "127.0.0.1",
@@ -290,7 +290,7 @@ for await (var v of ch.receive()) {
 #### Cron
 
 ```
-import {cron} from 'https://deno.land/x/sf/mod.js';
+import {cron} from 'https://git.io/mod.js';
 
 cron('* * * * *', ()=>{
     console.log(1)
@@ -308,7 +308,7 @@ cron('* * * * *', ()=>{
 >  No default `Content-Type`, make more transparent
 
 ```
-import {http} from 'https://deno.land/x/sf/mod.js';
+import {http} from 'https://git.io/mod.js';
 
 var r = await http('https://httpbin.org/get');
 
