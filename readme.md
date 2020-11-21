@@ -8,22 +8,6 @@ sf tries to ignore concepts: HTTP method, cookie, session and prefers JSON forma
 sf recommends to separate api server, upload server and static server.
 If you are very familiar with the HTTP protocol and like simple, you may like sf, otherwise you may not like sf.
 
-### Table of Contents
-
-- [Basic](#basic)
-    - [Websocket](#websocket)
-    - [Not Found](#not-found)
-- [Advanced](#advanced)
-    - [Hooks](#hooks)
-    - [CORS](#cors)
-    - [HTTPS](#https)
-    - [Debug](#debug)
-    - [Cookie, Session, Token](#cookie-session-no-lets-token)
-- [Database](#database)
-    - [Database Migration](#database-migrationmysql)
-    - [Database Operation](#database-operationmysql)
-    - [Redis](#redis)
-
 ## Basic
 
 ```
