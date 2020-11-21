@@ -1,6 +1,6 @@
-import { serve, serveTLS } from "https://deno.land/std/http/server.ts";
-import { acceptWebSocket } from "https://deno.land/std/ws/mod.ts";
-import { BufReader } from "https://deno.land/std/io/bufio.ts";
+import { serve, serveTLS } from "https://deno.land/std@0.78.0/http/server.ts";
+import { acceptWebSocket } from "https://deno.land/std@0.78.0/ws/mod.ts";
+import { BufReader } from "https://deno.land/std@0.78.0/io/bufio.ts";
 // import { cron } from './cron.js';
 
 var sf = {};
