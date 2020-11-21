@@ -23,9 +23,6 @@ If you are very familiar with the HTTP protocol and like simple, you may like sf
     - [Database Migration](#database-migrationmysql)
     - [Database Operation](#database-operationmysql)
     - [Redis](#redis)
-- [Utils](#utils)
-    - [Cron](#cron)
-    - [HTTP Client](#http-client)
 
 ## Basic
 
@@ -283,74 +280,4 @@ var ch = await rds.subscribe('channel');
 for await (var v of ch.receive()) {
     console.log(v);
 }
-```
-
-## Utils
-
-#### Cron
-
-```
-import {cron} from 'https://git.io/mod.js';
-
-cron('* * * * *', ()=>{
-    console.log(1)
-});
-
-cron('* * * * *', ()=>{
-    console.log(2)
-});
-```
-
-> [https://en.wikipedia.org/wiki/Cron](https://en.wikipedia.org/wiki/Cron)
-
-#### HTTP Client
-
->  No default `Content-Type`, make more transparent
-
-```
-import {http} from 'https://git.io/mod.js';
-
-var r = await http('https://httpbin.org/get');
-
-var r = await http('https://httpbin.org/post?a=1', {
-    method: 'POST',                                         // http request method
-    query: {b: 2},                                          // http request query, will append to the url
-    headers: {'Content-Type': 'text/plain; charset=utf-8'}, // http request headers
-    body: 'hey sf!',                                        // http request body, can be string, Uint8Array, FormData
-});
-
-var r = await http('https://httpbin.org/post?a=1', {
-    method: 'POST',
-    query: {b: 2},
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({hey: 'sf'}),
-});
-
-var r = await http('https://httpbin.org/post?a=1', {
-    method: 'POST',
-    query: {b: 2},
-    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-    body: new URLSearchParams({hey: 'sf'}).toString(),
-});
-
-var r = await http('https://httpbin.org/post?a=1', {
-    method: 'POST',
-    query: {b: 2},
-    headers: {'Content-Type': 'application/octet-stream'},
-    body: Uint8Array.from([1,2,3,4]),
-});
-
-var r = await http('https://httpbin.org/post?a=1', {
-    method: 'POST',
-    query: {b: 2},
-    body: new FormData(), // Content-Type: multipart/form-data; boundary=... will be appended to headers automatically
-});
-
-// r.status        // http response status code, int
-// r.headers       // http response headers, {}
-
-// r.uint8Array    // http reponse body binary, Unit8Array
-// r.text          // http reponse body text plain
-// r.json          // http reponse body if it can be parsed to json
-// r.formData      // http reponse body if it can be parsed to FromData // see issue #2
 ```
