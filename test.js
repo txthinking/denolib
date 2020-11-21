@@ -1,4 +1,4 @@
-import {sf, migrate, mysql, redis, http} from './mod.js';
+import {sf, migrate, mysql, redis} from './mod.js';
 
 sf.path('/', async (r)=>{
     var h = {};
