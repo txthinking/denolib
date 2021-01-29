@@ -6,7 +6,7 @@ var db = (conn, istx = false)=>{
             var l = [];
             var l1 = [];
             var l2 = [];
-            l2.push(table);
+            var l3 = [];
             for(var k in o){
                 if(k == 'id'){
                     continue;
@@ -14,9 +14,9 @@ var db = (conn, istx = false)=>{
                 l.push('??');
                 l1.push('?');
                 l2.push(k);
-                l2.push(o[k]);
+                l3.push(o[k]);
             }
-            var r = await conn.execute(`insert into ??(${l.join(', ')}) values(${l1.join('?, ')})`, l2);
+            var r = await conn.execute(`insert into ??(${l.join(', ')}) values(${l1.join('?, ')})`, [table].concat(l2).concat(l3));
             r = await conn.query(`select * from ?? where id=?`, [table, r.lastInsertId]);
             return r[0];
         },
