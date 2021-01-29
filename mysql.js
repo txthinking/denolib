@@ -16,7 +16,7 @@ var db = (conn, istx = false)=>{
                 l2.push(k);
                 l3.push(o[k]);
             }
-            var r = await conn.execute(`insert into ??(${l.join(', ')}) values(${l1.join('?, ')})`, [table].concat(l2).concat(l3));
+            var r = await conn.execute(`insert into ??(${l.join(', ')}) values(${l1.join(', ')})`, [table].concat(l2).concat(l3));
             r = await conn.query(`select * from ?? where id=?`, [table, r.lastInsertId]);
             return r[0];
         },
