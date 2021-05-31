@@ -22,4 +22,4 @@ var redis = async (options)=>{
     };
 };
 
-export {redis};
+export default redis;

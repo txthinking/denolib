@@ -1,6 +1,6 @@
-import {sf, migrate, mysql, redis} from './mod.js';
+import httpserver from './httpserver.js';
 
-sf.path('/', async (r)=>{
+httpserver.path('/', async (r)=>{
     var h = {};
     for (var v of r.headers.entries()){
         h[v[0]] = v[1];
@@ -12,10 +12,16 @@ sf.path('/', async (r)=>{
         headers: h,
     };
 });
-sf.wspath('/ws', async (r, ws)=>{
+httpserver.ws('/ws', async (r, ws)=>{
     for await (var v of ws) {
         await ws.send(v);
     }
 });
 
-sf.run(80);
+httpserver.run(2020);
+
+// var kv = ckv("abcdefghijklmnopqrstuvwxyz012345"); // pass in a 32 length key
+
+// var token = kv.encrypt("uid", 1);
+// var uid = kv.decrypt("uid", token);
+// var uid = kv.decrypt("uid", token, 30*24*60*60); // only allow token to be valid for 30 days

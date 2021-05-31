@@ -36,4 +36,4 @@ var ckv = (key) => {
     };
 };
 
-export {ckv};
+export default ckv;

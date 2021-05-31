@@ -1,46 +1,40 @@
 import { serve, serveTLS } from "https://deno.land/std@0.78.0/http/server.ts";
 import { acceptWebSocket } from "https://deno.land/std@0.78.0/ws/mod.ts";
 import { BufReader } from "https://deno.land/std@0.78.0/io/bufio.ts";
-// import { cron } from './cron.js';
 
-var sf = {};
+var httpserver = {};
 
-sf.cors = '*';
+httpserver.cors = '*';
 
-sf.before = (r)=>null;
-sf.after = (r)=>null;
+httpserver.before = (r)=>null;
+httpserver.after = (r)=>null;
 
-sf.handler = {};
-sf.path = (path, f) => sf.handler[path] = f
-// TODO remove
-sf.handle = sf.path
+httpserver.handler = {};
+httpserver.path = (path, f) => httpserver.handler[path] = f
 
-sf.wshandler = {};
-sf.wspath = (path, f) => sf.wshandler[path] = f
-// TODO remove
-sf.wshandle = sf.wspath
+httpserver.wshandler = {};
+httpserver.ws = (path, f) => httpserver.wshandler[path] = f
 
-sf.ok = (data) => { return {error: null, data} };
-sf.err = (error) => { return {error, data: null} };
-sf.notfound = (r)=>sf.err('404')
+httpserver.ok = (data) => { return {error: null, data} };
+httpserver.err = (error) => { return {error, data: null} };
+httpserver.notfound = (r)=>httpserver.err('404')
 
 function response(o){this.o={status: o.status, headers: new Headers(o.headers), body: o.body};}
-sf.response = (o)=> new response(o)
+httpserver.response = (o)=> new response(o)
 
 var debug = false;
-Object.defineProperty(sf, 'debug', {
+Object.defineProperty(httpserver, 'debug', {
     get: function(){
         return debug;
     },
     set: function(v){
-        // cron(!!v);
         debug = v;
     },
 });
 var log = (...args) => debug && console.log((new Date()).toString(), ...args)
 
 var handle = async (r) => {
-    sf.before(r);
+    httpserver.before(r);
     log("=>", r.url);
 
     r.query = {};
@@ -56,7 +50,7 @@ var handle = async (r) => {
 
     var headers = {"Content-Type": "application/json"};
     if(r.headers.get("Origin")){
-        headers["Access-Control-Allow-Origin"] = sf.cors;
+        headers["Access-Control-Allow-Origin"] = httpserver.cors;
         headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, HEAD, PATCH";
         if(r.headers.get("Access-Control-Request-Headers")){
             headers["Access-Control-Allow-Headers"] = r.headers.get("Access-Control-Request-Headers");
@@ -64,20 +58,20 @@ var handle = async (r) => {
         headers["Access-Control-Max-Age"] = 24*60*60;
     }
 
-    var h = sf.handler[r.url.split('?')[0]];
+    var h = httpserver.handler[r.url.split('?')[0]];
     if(!h){
-        var wsh = sf.wshandler[r.url.split('?')[0]];
+        var wsh = httpserver.wshandler[r.url.split('?')[0]];
         if(!wsh){
             try{
-                var o = await sf.notfound(r);
+                var o = await httpserver.notfound(r);
                 r.respond(o instanceof response ? o.o : {headers: new Headers(headers), body: JSON.stringify(o)});
             }catch(e){
-                var o = sf.err(e.toString());
+                var o = httpserver.err(e.toString());
                 r.respond(o instanceof response ? o.o : {headers: new Headers(headers), body: JSON.stringify(o)});
             }
             r.response = o;
             log('<=', r.url, o);
-            sf.after(r);
+            httpserver.after(r);
             return;
         }
         try {
@@ -88,11 +82,11 @@ var handle = async (r) => {
                 headers: r.headers,
             });
         } catch (e) {
-            var o = sf.err(e.toString());
+            var o = httpserver.err(e.toString());
             r.respond(o instanceof response ? o.o : {headers: new Headers(headers), body: JSON.stringify(o)});
             r.response = o;
             log('<=', r.url, o);
-            sf.after(r);
+            httpserver.after(r);
             return;
         }
         wsh(r, ws).catch(async e=>{
@@ -100,7 +94,7 @@ var handle = async (r) => {
             if (!ws.isClosed) {
                 await ws.close(1000).catch(console.error);
             }
-            sf.after(r);
+            httpserver.after(r);
         });
         return;
     }
@@ -128,15 +122,15 @@ var handle = async (r) => {
         var o = await h(r);
         r.respond(o instanceof response ? o.o : {headers: new Headers(headers), body: JSON.stringify(o)});
     }catch(e){
-        var o = sf.err(e.toString());
+        var o = httpserver.err(e.toString());
         r.respond(o instanceof response ? o.o : {headers: new Headers(headers), body: JSON.stringify(o)});
     }
     r.response = o;
     log('<=', r.url, o);
-    sf.after(r);
+    httpserver.after(r);
 }
 
-sf.run = async (options) => {
+httpserver.run = async (options) => {
     if(!options || typeof options === 'number'){
         var s = serve({
             port: options || 2020,
@@ -150,9 +144,8 @@ sf.run = async (options) => {
         });
     }
     for await (var r of s) {
-        // I like to catch errors in the process, this allows me to understand the process better, but there may still be omissions
         handle(r).catch(console.error);
     }
 }
 
-export {sf};
+export default httpserver;

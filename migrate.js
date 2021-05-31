@@ -29,4 +29,4 @@ var migrate = async (config) => {
     return f;
 };
 
-export {migrate};
+export default migrate;

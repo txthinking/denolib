@@ -72,4 +72,4 @@ var mysql = async (config) => {
     return db(await new Client().connect(config));
 };
 
-export {mysql};
+export default mysql;
