@@ -1,11 +1,11 @@
-## denox
+## denolib
 
-A simple deno library
+A deno library, keep everything small.
 
 ## httpserver.js
 
 ```
-import httpserver from 'https://raw.githubusercontent.com/txthinking/denox/master/httpserver.js';
+import httpserver from 'https://raw.githubusercontent.com/txthinking/denolib/master/httpserver.js';
 
 httpserver.path('/', async (r)=>{
     return { query: r.query, body: r.json };
@@ -92,10 +92,23 @@ httpserver.path('/hello', async (r)=>{
 });
 ```
 
+### crypto
+
+```
+import crypto from 'https://raw.githubusercontent.com/txthinking/denolib/master/crypto.js';
+
+var kv = crypto("abcdefghijklmnopqrstuvwxyz012345"); // pass in a 32 length key
+
+var token = kv.encrypt("uid", 1);
+
+var uid = kv.decrypt("uid", token);
+var uid = kv.decrypt("uid", token, 30*24*60*60); // only allow token to be valid for 30 days
+```
+
 ### migrate.js
 
 ```
-import migrate from 'https://raw.githubusercontent.com/txthinking/denox/master/migrate.js';
+import migrate from 'https://raw.githubusercontent.com/txthinking/denolib/master/migrate.js';
 
 var mg = await migrate({
     hostname: "127.0.0.1",
@@ -122,7 +135,7 @@ await mg("another unique id string", 'another sql');
 connect
 
 ```
-import mysql from 'https://raw.githubusercontent.com/txthinking/denox/master/mysql.js';
+import mysql from 'https://raw.githubusercontent.com/txthinking/denolib/master/mysql.js';
 
 var db = await mysql({
     hostname: "127.0.0.1",
@@ -176,7 +189,7 @@ var r = await db.transaction(async (db)=>{
 connect
 
 ```
-import redis from 'https://raw.githubusercontent.com/txthinking/denox/master/redis.js';
+import redis from 'https://raw.githubusercontent.com/txthinking/denolib/master/redis.js';
 
 var rds = await redis({
     hostname: "127.0.0.1",
