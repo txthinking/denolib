@@ -13,9 +13,8 @@ async function handle(conn) {
     const httpConn = Deno.serveHttp(conn);
     while (true) {                  
         try {         
-          console.log(1111133333333);
             const r = await httpConn.nextRequest();
-          console.log(11111, r.request.url);
+            if(!r)break;
             var h = httpserver.handler[new URL(r.request.url).pathname];
             try {      
                 var res;     
@@ -53,6 +52,7 @@ httpserver.run = async (port) => {
     while (true) {
         try {
             const conn = await server.accept();
+            if(!conn)break;
             handle(conn);
         } catch (err) {
             console.log(err);
