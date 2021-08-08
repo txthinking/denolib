@@ -1,44 +1,43 @@
-var httpserver = {};                                                                                                                                                                                                                             [2/24]
-                                                             
-httpserver.cors = "*";                                                                                                     
-httpserver.handler = {};                                                                                                   
-httpserver.path = (path, f) => (httpserver.handler[path] = f);                    
-httpserver.notfound = async (r) => {                                                                                       
+var httpserver = {};
+httpserver.cors = "*";
+httpserver.handler = {};
+httpserver.path = (path, f) => (httpserver.handler[path] = f);
+httpserver.notfound = async (r) => {
     return new Response(`404`, {
-        status: 404,                                                                                                       
-    });          
-};                                       
-                                                             
-async function handle(conn) {       
+        status: 404,
+    });
+};
+
+async function handle(conn) {
     const httpConn = Deno.serveHttp(conn);
-    while (true) {                  
-        try {         
+    while (true) {
+        try {
             const r = await httpConn.nextRequest();
             if(!r)break;
             var h = httpserver.handler[new URL(r.request.url).pathname];
-            try {      
-                var res;     
+            try {
+                var res;
                 if (!h) {
                     res = await httpserver.notfound(r.request);
                 }
                 if (h) {
                     res = await h(r.request);
-                }                 
-                if (r.headers.get("Origin")) {
+                }
+                if (r.request.headers.get("Origin")) {
                     res.headers.set("Access-Control-Allow-Origin", httpserver.cors);
                     res.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, HEAD, PATCH");
                     if (r.request.headers.get("Access-Control-Request-Headers")) {
-                        res.headers.set("Access-Control-Allow-Headers", r.headers.get("Access-Control-Request-Headers"));
-                    }  
+                        res.headers.set("Access-Control-Allow-Headers", r.request.headers.get("Access-Control-Request-Headers"));
+                    }
                     res.headers.set("Access-Control-Max-Age", 24 * 60 * 60);
-                } 
+                }
                 await r.respondWith(res);
             } catch (e) {
                 await r.respondWith(
-                    new Response(`$e`, {
+                    new Response(`${e}`, {
                         status: 500,
-                    })      
-                );                               
+                    })
+                );
             }
         } catch (err) {
             console.log(err);
