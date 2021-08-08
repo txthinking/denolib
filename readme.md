@@ -8,20 +8,14 @@ A deno library, keep everything small.
 import httpserver from 'https://raw.githubusercontent.com/txthinking/denolib/master/httpserver.js';
 
 httpserver.path('/', async (r)=>{
-    return { query: r.query, body: r.json };
+    await r.respondWith(
+      new Response("hello world", {
+        status: 200,
+      }),
+    );
 });
 
 httpserver.run(2020);
-```
-
-```
-$ curl -v -d '{"hey":"girl"}' http://127.0.0.1:2020/?hey=boy
-```
-
-debug
-
-```
-httpserver.debug = true;
 ```
 
 cors
@@ -33,63 +27,7 @@ httpserver.cors = '*';
 404
 
 ```
-httpserver.notfound = (r) => {error: 404}
-```
-
-hook
-
-```
-httpserver.before = (r) => {
-    // do something before handle
-}
-httpserver.after = (r) => {
-    // do something after handle
-}
-```
-
-https
-
-```
-httpserver.run({
-    port: 443,
-    hostname: 'localhost',
-    certFile: './cert.pem',
-    keyFile: './cert_key.pem',
-})
-```
-
-websocket
-
-```
-httpserver.ws('/ws', async (r, ws)=>{
-    for await (var v of ws) {
-        if (typeof v === "string") {
-            await ws.send(v);
-        }
-        if (v instanceof Uint8Array) {
-            await ws.send(v);
-        }
-    }
-});
-```
-
-response
-
-```
-httpserver.path('/hello', async (r)=>{
-    // r.url           // http request url
-    // r.method        // http request method
-    // r.headers       // http request headers
-    // r.query         // http request query object, (url parameters)
-    // r.json          // http request json body object
-    // r.uint8Array    // http request body binary, Uint8Array
-
-    return httpserver.response({
-        status: 200,                                            // any http status code
-        headers: {'Content-Type': 'text/plain; charset=utf-8'}, // any headers you want to respond
-        body: 'hello httpserver!',                              // body can be string, Uint8Array or Reader
-    });
-});
+httpserver.notfound = (r) => {...}
 ```
 
 ### crypto
