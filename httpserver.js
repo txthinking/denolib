@@ -1,6 +1,6 @@
-import { serve, serveTLS } from "https://deno.land/std@0.78.0/http/server.ts";
-import { acceptWebSocket } from "https://deno.land/std@0.78.0/ws/mod.ts";
-import { BufReader } from "https://deno.land/std@0.78.0/io/bufio.ts";
+import { serve, serveTLS } from "https://deno.land/std@0.103.0/http/server.ts";
+import { acceptWebSocket } from "https://deno.land/std@0.103.0/ws/mod.ts";
+import { BufReader } from "https://deno.land/std@0.103.0/io/bufio.ts";
 
 var httpserver = {};
 
