@@ -8,11 +8,9 @@ A deno library, keep everything small.
 import httpserver from 'https://raw.githubusercontent.com/txthinking/denolib/master/httpserver.js';
 
 httpserver.path('/', async (r)=>{
-    await r.respondWith(
-      new Response("hello world", {
+      return new Response("hello world", {
         status: 200,
       }),
-    );
 });
 
 httpserver.run(2020);
