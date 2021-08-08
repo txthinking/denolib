@@ -13,6 +13,7 @@ async function handle(conn) {
     const httpConn = Deno.serveHttp(conn);
     while (true) {                  
         try {         
+          console.log(1111133333333);
             const r = await httpConn.nextRequest();
           console.log(11111, r.request.url);
             var h = httpserver.handler[new URL(r.request.url).pathname];
