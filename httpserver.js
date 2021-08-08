@@ -18,10 +18,10 @@ async function handle(conn) {
             try {      
                 var res;     
                 if (!h) {
-                    res = await httpserver.notfound(r);
+                    res = await httpserver.notfound(r.request);
                 }
                 if (h) {
-                    res = await h(r);
+                    res = await h(r.request);
                 }                 
                 if (r.headers.get("Origin")) {
                     res.headers.set("Access-Control-Allow-Origin", httpserver.cors);
