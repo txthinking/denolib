@@ -14,6 +14,7 @@ async function handle(conn) {
     while (true) {                  
         try {         
             const r = await httpConn.nextRequest();
+          console.log(r);
             var h = httpserver.handler[new URL(r.request.url).pathname];
             try {      
                 var res;     
