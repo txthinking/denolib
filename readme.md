@@ -10,7 +10,7 @@ import httpserver from 'https://raw.githubusercontent.com/txthinking/denolib/mas
 httpserver.path('/', async (r)=>{
       return new Response("hello world", {
         status: 200,
-      }),
+      });
 });
 
 httpserver.run(2020);
