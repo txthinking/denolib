@@ -17,11 +17,16 @@ async function handle(conn) {
             var h = httpserver.handler[new URL(r.request.url).pathname];
             try {
                 var res;
-                if (!h) {
-                    res = await httpserver.notfound(r.request);
+                if (r.request.method == "OPTIONS"){
+                    res = new Response()
                 }
-                if (h) {
-                    res = await h(r.request);
+                if (r.request.method != "OPTIONS"){
+                    if (!h) {
+                        res = await httpserver.notfound(r.request);
+                    }
+                    if (h) {
+                        res = await h(r.request);
+                    }
                 }
                 if (r.request.headers.get("Origin")) {
                     res.headers.set("Access-Control-Allow-Origin", httpserver.cors);
