@@ -9,7 +9,7 @@ var crypto = (key) => {
         return;
     }
     return {
-        encrypt: (k, v) => {
+        encrypt: async (k, v) => {
             var text = JSON.stringify({
                 k: k,
                 v: v,
@@ -20,7 +20,7 @@ var crypto = (key) => {
             var b = await kv.encrypt(text);
             return hexencode(new Uint8Array([...iv, ...b]));
         },
-        decrypt: (k, c, lifecycle) => {
+        decrypt: async (k, c, lifecycle) => {
             var b = hexdecode(c);
             var kv = new AES(key, { mode: "cfb", iv: b.slice(0, 16) });
             var r = await kv.decrypt(b.slice(16));
