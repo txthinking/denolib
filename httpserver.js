@@ -51,8 +51,9 @@ async function handle(conn) {
     }
 }
 
-httpserver.run = async (port) => {
-    const server = Deno.listen({ port });
+httpserver.run = async (port, hostname) => {
+    
+    const server = Deno.listen({ port, hostname});
     while (true) {
         try {
             const conn = await server.accept();
