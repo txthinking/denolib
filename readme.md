@@ -41,31 +41,6 @@ var uid = kv.decrypt("uid", token);
 var uid = kv.decrypt("uid", token, 30*24*60*60); // only allow token to be valid for 30 days
 ```
 
-### migrate.js
-
-```
-import migrate from 'https://raw.githubusercontent.com/txthinking/denolib/master/migrate.js';
-
-var mg = await migrate({
-    hostname: "127.0.0.1",
-    port: 3306,
-    username: "root",
-    password: "111111",
-    db: "httpserver", // don't need to create database manually
-});
-
-// each unique id execute at most once
-await mg("a unique id string", `
-    CREATE TABLE user (
-        id int(10) unsigned NOT NULL AUTO_INCREMENT,
-        email varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL default '',
-        PRIMARY KEY (id)
-    ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-`);
-
-await mg("another unique id string", 'another sql');
-```
-
 ### mysql
 
 connect
@@ -118,6 +93,24 @@ var r = await db.transaction(async (db)=>{
     var rows = await db.query('select * from user where id=?', [1]);
     return rows;
 });
+```
+### migrate.js
+
+```
+import migrate from 'https://raw.githubusercontent.com/txthinking/denolib/master/migrate.js';
+
+var mg = await migrate(db, 'dbname'); // don't need to create database manually
+
+// each unique id execute at most once
+await mg("a unique id string", `
+    CREATE TABLE user (
+        id int(10) unsigned NOT NULL AUTO_INCREMENT,
+        email varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL default '',
+        PRIMARY KEY (id)
+    ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+`);
+
+await mg("another unique id string", 'another sql');
 ```
 
 ### redis.js
