@@ -22,10 +22,10 @@ async function handle(conn) {
                 }
                 if (r.request.method != "OPTIONS"){
                     if (!h) {
-                        res = await httpserver.notfound(r.request);
+                        res = await httpserver.notfound(r.request, httpConn);
                     }
                     if (h) {
-                        res = await h(r.request);
+                        res = await h(r.request, httpConn);
                     }
                 }
                 if (r.request.headers.get("Origin")) {
