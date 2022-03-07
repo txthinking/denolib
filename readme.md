@@ -63,7 +63,7 @@ migrate
 ```
 import migrate from 'https://raw.githubusercontent.com/txthinking/denolib/master/migrate.js';
 
-var mg = await migrate(db); // don't need to create database manually
+var mg = await migrate(db);
 
 // each unique id execute at most once
 await mg("a unique id string", `
