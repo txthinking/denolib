@@ -1,4 +1,4 @@
-var migrate = async (db, dbname) => {
+var migrate = async (db) => {
     var f =  async (id, sql) => {
         var r = await db.query(`select * from migration where ID=?`, [id]);
         if(r.length != 0){
