@@ -65,6 +65,9 @@ var db = (conn, istx = false)=>{
                 return await f(db(conn, true));
             });
         },
+        close: async()=>{
+            await conn.close();
+        },
     };
 };
 
