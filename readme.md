@@ -54,6 +54,7 @@ var db = await mysql({
     username: "root",
     password: "111111",
     poolSize: 3,
+    db: "dbname",
 });
 ```
 
@@ -62,7 +63,7 @@ migrate
 ```
 import migrate from 'https://raw.githubusercontent.com/txthinking/denolib/master/migrate.js';
 
-var mg = await migrate(db, 'dbname'); // don't need to create database manually
+var mg = await migrate(db); // don't need to create database manually
 
 // each unique id execute at most once
 await mg("a unique id string", `
