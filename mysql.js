@@ -72,7 +72,14 @@ var db = (conn, istx = false)=>{
 };
 
 var mysql = async (config) => {
-    return db(await new Client().connect(config));
+    var dbname = config.db;
+    delete config.db;
+    var conn = await new Client().connect(config);
+    await conn.execute(`CREATE DATABASE IF NOT EXISTS ${dbname}`);
+    await conn.close();
+    config.db = dbname;
+    var conn = await new Client().connect(config);
+    return db(conn);
 };
 
 export default mysql;
