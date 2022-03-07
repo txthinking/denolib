@@ -7,9 +7,6 @@ var migrate = async (db, dbname) => {
         await db.execute(sql);
         await db.execute(`insert into migration values('${id}')`);
     };
-
-    await db.execute(`CREATE DATABASE IF NOT EXISTS ${dbname}`);
-    await db.execute(`USE ${dbname}`);
     var r = await db.execute(`show tables like 'migration'`);
     if(r.rows.length != 0 ){
         return f;
