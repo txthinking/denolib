@@ -7,13 +7,33 @@ A deno library, keep everything small.
 ```
 import httpserver from 'https://raw.githubusercontent.com/txthinking/denolib/master/httpserver.js';
 
-httpserver.path('/', async (r)=>{
+httpserver.path('/hello', async (r)=>{
       return new Response("hello world", {
         status: 200,
       });
 });
 
-httpserver.run(2020);
+httpserver.run({port:2020});
+```
+
+static
+
+```
+httpserver.staticdir = "/path/to/static/dir";
+```
+
+static with [denobundle](https://github.com/txthinking/denobundle)
+
+```
+import readFileSync from './bundle.js';
+
+httpserver.readfile = (path) => readFileSync("static" + path);
+```
+
+SPA
+
+```
+httpserver.spa = true;
 ```
 
 cors
