@@ -18,10 +18,10 @@ var crypto = (key) => {
             var iv = randomBytes(16);
             var kv = new AES(key, { mode: "cfb", iv: iv });
             var b = await kv.encrypt(text);
-            return hexencode(new Uint8Array([...iv, ...b]));
+            return new TextDecoder().decode(hexencode(new Uint8Array([...iv, ...b])));
         },
         decrypt: async (k, c, lifecycle) => {
-            var b = hexdecode(c);
+            var b = hexdecode(new TextEncoder().encode(c));
             var kv = new AES(key, { mode: "cfb", iv: b.slice(0, 16) });
             var r = await kv.decrypt(b.slice(16));
             var o = JSON.parse(r.toString());
