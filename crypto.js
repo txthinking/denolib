@@ -1,6 +1,6 @@
 import { AES } from "https://deno.land/x/god_crypto@v1.4.10/mod.ts";
-import { decodeString as hexdecode } from "https://deno.land/std@0.130.0/encoding/hex.ts";
-import { encodeToString as hexencode } from "https://deno.land/std@0.130.0/encoding/hex.ts";
+import { decode as hexdecode } from "https://deno.land/std@0.130.0/encoding/hex.ts";
+import { encode as hexencode } from "https://deno.land/std@0.130.0/encoding/hex.ts";
 import { randomBytes } from "https://deno.land/std@0.130.0/node/crypto.ts";
 
 var crypto = (key) => {
