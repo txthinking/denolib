@@ -19,7 +19,7 @@ httpserver.run({port:2020});
 static
 
 ```
-httpserver.staticdir = "/path/to/static/dir";
+httpserver.staticdir = "/path/to/static";
 ```
 
 static with [denobundle](https://github.com/txthinking/denobundle)
