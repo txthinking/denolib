@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.130.0/http/server.ts";
-import { join } from "https://deno.land/std@0.126.0/path/mod.ts";
+import { join } from "https://deno.land/std@0.130.0/path/mod.ts";
 
 var httpserver = {};
 
