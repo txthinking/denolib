@@ -88,9 +88,15 @@ export function which(q, m) {
     m[l[i]]();
 }
 
-export function what(q, re) {
+export function what(q, v) {
     for (;;) {
         var s = prompt(q + "\n");
+        if(typeof v === "function"){
+            if(v(s)){
+                return s;
+            }
+            continue;
+        }
         if (re.test(s)) {
             return s;
         }
