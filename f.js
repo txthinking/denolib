@@ -1,8 +1,11 @@
 import { encode as hexencode, decode as hexdecode } from "https://deno.land/std@0.130.0/encoding/hex.ts";
 import { createHash } from "https://deno.land/std@0.130.0/hash/mod.ts";
 import { join } from "https://deno.land/std@0.130.0/path/mod.ts";
+import { bgYellow, bgGreen } from "https://deno.land/std@0.130.0/fmt/colors.ts";
 
-export async function sh(s) {
+// why 1, because return STDOUT, that is 1
+export async function sh1(s) {
+    console.log(bgGreen(s));
     var p = Deno.run({
         cmd: ["sh", "-c", s],
         stdout: "piped",
@@ -14,6 +17,18 @@ export async function sh(s) {
         throw `${new TextDecoder("utf-8").decode(stdout)} ${new TextDecoder("utf-8").decode(stderr)}`;
     }
     return new TextDecoder("utf-8").decode(stdout);
+}
+
+export async function sh(s) {
+    console.log(bgGreen(s));
+    var p = Deno.run({
+        cmd: ["sh", "-c", s],
+    });
+    var [status] = await Promise.all([p.status()]);
+    p.close();
+    if (status.code != 0) {
+        throw `${status.code}`;
+    }
 }
 
 export function s2b(s) {
@@ -78,7 +93,7 @@ export function md5(s) {
 export function which(q, m) {
     var l = Object.keys(m);
     for (;;) {
-        var i = prompt(l.map((v, i) => `${i}: ${v}`).join("\n") + `\n${q}\n`);
+        var i = prompt(bgYellow(l.map((v, i) => `${i}: ${v}`).join("\n") + `\n${q}\n`));
         i = parseInt(i);
         if (isNaN(i) || i < 0 || i + 1 > l.length) {
             continue;
@@ -90,7 +105,7 @@ export function which(q, m) {
 
 export function what(q, v) {
     for (;;) {
-        var s = prompt(q + "\n");
+        var s = prompt(bgYellow(q + "\n"));
         if(typeof v === "function"){
             if(v(s)){
                 return s;
@@ -101,4 +116,12 @@ export function what(q, v) {
             return s;
         }
     }
+}
+
+export function echo(s) {
+    console.log(s);
+}
+
+export function log(s) {
+    console.log(new Date().toLocaleString(), s);
 }
