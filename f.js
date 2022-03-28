@@ -141,3 +141,7 @@ export function ok (s){
         headers: { "Content-Type": typeof s === 'string' ? "text/plain; charset=utf-8" : "application/json" },
     });
 };
+
+export async function sleep (ms){
+    await new Promise(r => setTimeout(r, ms));
+}
