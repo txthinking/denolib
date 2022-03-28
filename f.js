@@ -125,3 +125,19 @@ export function echo(s) {
 export function log(s) {
     console.log(new Date().toLocaleString(), s);
 }
+
+export function err (s, code){
+    return new Response(s, {
+        status: code ?? 400,
+    });
+}
+
+export function ok (s){
+    if(!s){
+        return new Response();
+    }
+    return new Response(typeof s === 'string' ? s : JSON.stringify(o), {
+        status: 200,
+        headers: { "Content-Type": typeof s === 'string' ? "text/plain; charset=utf-8" : "application/json" },
+    });
+};
