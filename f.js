@@ -147,6 +147,8 @@ export async function sleep (ms){
 }
 
 // async lock, js lock, js mutex, js sync, js queue
+// var sync = new Sync();
+// await sync.atomic(async () => {});
 export function Sync() {
     var p = Promise.resolve();
     this.atomic = (f) => {
