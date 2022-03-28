@@ -145,3 +145,22 @@ export function ok (s){
 export async function sleep (ms){
     await new Promise(r => setTimeout(r, ms));
 }
+
+// async lock, js lock, js mutex, js sync, js queue
+export function Sync() {
+    var p = Promise.resolve();
+    this.atomic = (f) => {
+        p = new Promise((resolve, reject) => {
+            p.then(() => {
+                f()
+                    .then((v) => resolve(v))
+                    .catch((v) => reject(v));
+            }).catch((e) => {
+                f()
+                    .then((v) => resolve(v))
+                    .catch((v) => reject(v));
+            });
+        });
+        return p;
+    };
+}
