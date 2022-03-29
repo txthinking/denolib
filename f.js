@@ -166,3 +166,7 @@ export function Sync() {
         return p;
     };
 }
+
+export function now (){
+    return parseInt(Date.now() / 1000);
+}
