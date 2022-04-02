@@ -90,17 +90,16 @@ export function md5(s) {
     return hash.toString();
 }
 
-export function which(q, m) {
-    var l = Object.keys(m);
+export function which(q, opts) {
     for (;;) {
-        var i = prompt(bgYellow(l.map((v, i) => `${i}: ${v}`).join("\n") + `\n${q}\n`));
+        var i = prompt(bgYellow(opts.map((v, i) => `${i + 1}. ${v}`).join("\n") + `\n${q}\n`));
         i = parseInt(i);
-        if (isNaN(i) || i < 0 || i + 1 > l.length) {
+        if (isNaN(i) || i < 1 || i > opts.length) {
             continue;
         }
         break;
     }
-    m[l[i]]();
+    return i;
 }
 
 export function what(q, v) {
