@@ -90,7 +90,7 @@ export function md5(s) {
     return hash.toString();
 }
 
-export function which(q, opts) {
+export function which1(q, opts) {
     for (;;) {
         var i = prompt(bgYellow(opts.map((v, i) => `${i + 1}. ${v}`).join("\n") + `\n${q}`));
         i = parseInt(i);
@@ -100,6 +100,19 @@ export function which(q, opts) {
         break;
     }
     return i;
+}
+
+export function which(q, m) {
+    var l = Object.keys(m);
+    for (;;) {
+        var i = prompt(bgYellow(l.map((v, i) => `${i + 1}: ${v}`).join("\n") + `\n${q}`));
+        i = parseInt(i);
+        if (isNaN(i) || i < 1 || i > l.length) {
+            continue;
+        }
+        break;
+    }
+    m[l[i - 1]]();
 }
 
 export function what(q, v) {
