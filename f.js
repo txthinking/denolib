@@ -92,7 +92,7 @@ export function md5(s) {
 
 export function which(q, opts) {
     for (;;) {
-        var i = prompt(bgYellow(opts.map((v, i) => `${i + 1}. ${v}`).join("\n") + `\n${q}\n`));
+        var i = prompt(bgYellow(opts.map((v, i) => `${i + 1}. ${v}`).join("\n") + `\n${q}`));
         i = parseInt(i);
         if (isNaN(i) || i < 1 || i > opts.length) {
             continue;
