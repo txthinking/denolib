@@ -182,3 +182,7 @@ export function Sync() {
 export function now (){
     return parseInt(Date.now() / 1000);
 }
+
+export function exit (code){
+    Deno.exit(code);
+}
