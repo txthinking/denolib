@@ -96,7 +96,7 @@ export async function which(question, anwseraction) {
         i = parseInt(i);       
         if (isNaN(i) || i < 1 || i > anwseraction.length) {
             continue;
-        } 
+        }
         break;
     }                                                      
     await anwseraction[i-1].action();
@@ -105,6 +105,9 @@ export async function which(question, anwseraction) {
 export function what(q, v) {
     for (;;) {
         var s = prompt(yellow(q + "\n"));
+        if(!s){
+            continue;
+        }
         if(typeof v === "function"){
             if(v(s)){
                 return s;
