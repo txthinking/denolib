@@ -111,7 +111,7 @@ export function what(q, v) {
             }
             continue;
         }
-        if (re.test(s)) {
+        if (v.test(s)) {
             return s;
         }
     }
