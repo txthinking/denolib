@@ -1,7 +1,7 @@
 import { encode as hexencode, decode as hexdecode } from "https://deno.land/std@0.130.0/encoding/hex.ts";
 import { createHash } from "https://deno.land/std@0.130.0/hash/mod.ts";
 import { join } from "https://deno.land/std@0.130.0/path/mod.ts";
-import { bgYellow, bgGreen } from "https://deno.land/std@0.130.0/fmt/colors.ts";
+import { yellow, bgGreen } from "https://deno.land/std@0.130.0/fmt/colors.ts";
 
 // why 1, because return STDOUT, that is 1
 export async function sh1(s) {
@@ -90,34 +90,21 @@ export function md5(s) {
     return hash.toString();
 }
 
-export function which1(q, opts) {
+export async function which(question, anwseraction) {
     for (;;) {
-        var i = prompt(bgYellow(opts.map((v, i) => `${i + 1}. ${v}`).join("\n") + `\n${q}`));
-        i = parseInt(i);
-        if (isNaN(i) || i < 1 || i > opts.length) {
+        var i = prompt(yellow(anwseraction.map((v, i) => `${i + 1}: ${v.anwser}`).join("\n") + `\n${question}`));
+        i = parseInt(i);       
+        if (isNaN(i) || i < 1 || i > anwseraction.length) {
             continue;
-        }
+        } 
         break;
-    }
-    return i;
-}
-
-export function which(q, m) {
-    var l = Object.keys(m);
-    for (;;) {
-        var i = prompt(bgYellow(l.map((v, i) => `${i + 1}: ${v}`).join("\n") + `\n${q}`));
-        i = parseInt(i);
-        if (isNaN(i) || i < 1 || i > l.length) {
-            continue;
-        }
-        break;
-    }
-    m[l[i - 1]]();
-}
+    }                                                      
+    await anwseraction[i-1].action();
+} 
 
 export function what(q, v) {
     for (;;) {
-        var s = prompt(bgYellow(q + "\n"));
+        var s = prompt(yellow(q + "\n"));
         if(typeof v === "function"){
             if(v(s)){
                 return s;
