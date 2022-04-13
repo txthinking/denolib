@@ -104,7 +104,7 @@ export async function which(question, anwseraction) {
 
 export function what(q, v) {
     for (;;) {
-        var s = prompt(yellow(q + "\n"));
+        var s = prompt(yellow(q));
         if(!s){
             continue;
         }
