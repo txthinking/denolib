@@ -47,7 +47,7 @@ export function h2s(h) {
     return new TextDecoder().decode(hexdecode(new TextEncoder().encode(h)));
 }
 
-export function hmac_sha256(message, key){
+export async function hmac_sha256(message, key){
     var encoder = new TextEncoder();
     var keyBuf = encoder.encode(key);
     var key = await crypto.subtle.importKey("raw", keyBuf, { name: "HMAC", hash: "SHA-256" }, true, ["sign", "verify"]);
