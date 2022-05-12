@@ -96,6 +96,12 @@ export function md5(s) {
     return hash.toString();
 }
 
+export function sha256(s) {
+    var hash = createHash("sha256");
+    hash.update(s);
+    return hash.toString();
+}
+
 export async function which(question, anwseraction) {
     for (;;) {
         var i = prompt(yellow(anwseraction.map((v, i) => `${i + 1}: ${v.anwser}`).join("\n") + `\n${question}`));
