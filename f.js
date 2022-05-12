@@ -47,6 +47,15 @@ export function h2s(h) {
     return new TextDecoder().decode(hexdecode(new TextEncoder().encode(h)));
 }
 
+export function hmac_sha256(message, key){
+    var encoder = new TextEncoder();
+    var keyBuf = encoder.encode(key);
+    var key = await crypto.subtle.importKey("raw", keyBuf, { name: "HMAC", hash: "SHA-256" }, true, ["sign", "verify"]);
+    var data = encoder.encode(message);
+    var result = await crypto.subtle.sign("HMAC", key, data.buffer);
+    return new TextDecoder().decode(hexencode(new Uint8Array(result)));
+}
+
 export function home() {
     return join.apply(null, [Deno.env.get("HOME"), ...arguments]);
 }
