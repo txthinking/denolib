@@ -48,12 +48,9 @@ export function h2s(h) {
 }
 
 export async function hmac_sha256(message, key){
-    var encoder = new TextEncoder();
-    var keyBuf = encoder.encode(key);
-    var key = await crypto.subtle.importKey("raw", keyBuf, { name: "HMAC", hash: "SHA-256" }, true, ["sign", "verify"]);
-    var data = encoder.encode(message);
-    var result = await crypto.subtle.sign("HMAC", key, data.buffer);
-    return new TextDecoder().decode(hexencode(new Uint8Array(result)));
+    key = await crypto.subtle.importKey("raw", key, { name: "HMAC", hash: "SHA-256" }, true, ["sign", "verify"]);
+    var result = await crypto.subtle.sign("HMAC", key, message);
+    return new Uint8Array(result);
 }
 
 export function home() {
