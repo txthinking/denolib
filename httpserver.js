@@ -13,6 +13,11 @@ httpserver.spa = false;
 httpserver.statichandler = null;
 httpserver.readfile = null;
 
+httpserver.default = async (r) => {
+    return new Response(`404`, {
+        status: 404,
+    });
+};
 httpserver.notfound = async (r) => {
     return new Response(`404`, {
         status: 404,
