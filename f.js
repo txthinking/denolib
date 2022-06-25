@@ -150,7 +150,7 @@ export function ok (s){
     if(!s){
         return new Response();
     }
-    return new Response(typeof s === 'string' ? s : JSON.stringify(o), {
+    return new Response(typeof s === 'string' ? s : JSON.stringify(s), {
         status: 200,
         headers: { "Content-Type": typeof s === 'string' ? "text/plain; charset=utf-8" : "application/json" },
     });
