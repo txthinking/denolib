@@ -5,7 +5,6 @@ import { yellow, bgGreen } from "https://deno.land/std@0.130.0/fmt/colors.ts";
 
 // why 1, because return STDOUT, that is 1
 export async function sh1(s) {
-    console.log(bgGreen(s));
     var p = Deno.run({
         cmd: ["sh", "-c", s],
         stdout: "piped",
@@ -20,7 +19,6 @@ export async function sh1(s) {
 }
 
 export async function sh(s) {
-    console.log(bgGreen(s));
     var p = Deno.run({
         cmd: ["sh", "-c", s],
     });
