@@ -45,7 +45,7 @@ httpserver.cors = '*';
 404
 
 ```
-httpserver.notfound = (r) => {...}
+httpserver.default = (r) => {...}
 ```
 
 ### crypto
