@@ -1,10 +1,15 @@
-## denolib
 
-A deno library, keep everything small.
+# Denolib
 
-## httpserver.js
+*A **Deno** library to keep everything small.*
 
-```
+<br>
+
+## HTTP Server
+
+<br>
+
+```javascript
 import httpserver from 'https://raw.githubusercontent.com/txthinking/denolib/master/httpserver.js';
 
 httpserver.path('/hello', async (r)=>{
@@ -16,41 +21,52 @@ httpserver.path('/hello', async (r)=>{
 httpserver.run({port:2020});
 ```
 
-static
+<br>
 
-```
+### Static
+
+```javascript
 httpserver.staticdir = "/path/to/static";
 ```
 
-static with [denobundle](https://github.com/txthinking/denobundle)
+### Static + **[DenoBundle]**
 
-```
+```javascript
 import readFileSync from './bundle.js';
 
 httpserver.readfile = (path) => readFileSync("static" + path);
 ```
 
-SPA
+<br>
 
-```
+### SPA
+
+```javascript
 httpserver.spa = true;
 ```
 
-cors
+<br>
 
-```
+### CORS
+
+```javascript
 httpserver.cors = '*';
 ```
 
-404
+<br>
 
-```
+### 404
+
+```javascript
 httpserver.default = (r) => {...}
 ```
 
-### crypto
+<br>
+<br>
 
-```
+## Crypto
+
+```javascript
 import crypto from 'https://raw.githubusercontent.com/txthinking/denolib/master/crypto.js';
 
 var kv = crypto("abcdefghijklmnopqrstuvwxyz012345"); // pass in a 32 length key
@@ -61,11 +77,19 @@ var uid = kv.decrypt("uid", token);
 var uid = kv.decrypt("uid", token, 30*24*60*60); // only allow token to be valid for 30 days
 ```
 
-### mysql
+<br>
 
-connect
+---
 
-```
+<br>
+
+## MySQL
+
+<br>
+
+### Connect
+
+```javascript
 import mysql from 'https://raw.githubusercontent.com/txthinking/denolib/master/mysql.js';
 
 var db = await mysql({
@@ -78,9 +102,11 @@ var db = await mysql({
 });
 ```
 
-migrate
+<br>
 
-```
+### Migrate
+
+```javascript
 import migrate from 'https://raw.githubusercontent.com/txthinking/denolib/master/migrate.js';
 
 var mg = await migrate(db);
@@ -97,11 +123,13 @@ await mg("a unique id string", `
 await mg("another unique id string", 'another sql');
 ```
 
-curd
+<br>
+
+### Curd
 
 > if you want to use this four methods, set auto increment primary key: id, set not null and default value for each field
 
-```
+```javascript
 // table name and row object, keys must match table fields or less
 var row = await db.c('user', {email: 'hi@httpserver.com'});
 
@@ -115,16 +143,20 @@ var row = await db.r('user', 1);
 await db.d('user', 1);
 ```
 
-sql
+<br>
 
-```
+### SQL
+
+```javascript
 var rows = await db.query('select * from user where id=?', [1]);
 await db.execute('update user set email=? where id=?', ['hi@httpserver.com', 1]);
 ```
 
-transaction
+<br>
 
-```
+### Transaction
+
+```javascript
 var r = await db.transaction(async (db)=>{
     var r = await db.c('user', {email: 'hey@httpserver.com'});
     // throw new Error('rollback');
@@ -134,11 +166,19 @@ var r = await db.transaction(async (db)=>{
 });
 ```
 
-### redis.js
+<br>
 
-connect
+---
 
-```
+<br>
+
+## Redis
+
+<br>
+
+### Connect
+
+```javascript
 import redis from 'https://raw.githubusercontent.com/txthinking/denolib/master/redis.js';
 
 var rds = await redis({
@@ -147,38 +187,46 @@ var rds = await redis({
 });
 ```
 
-command
+<br>
 
-```
+### command
+
+```javascript
 var r = await rds.exec('set', 'hi', 'httpserver');
 var r = await rds.exec('get', 'hi');
 ```
 
-pipeline
+### Pipeline
 
-```
+```javascript
 await rds.pipeline((rds)=>{
     rds.exec('set', 'hi', 'httpserver');
     rds.exec('set', 'hey', 'httpserver');
 });
 ```
 
-transaction
+### Transaction
 
 > Guarantee atomicity
 
-```
+```javascript
 await rds.transaction((rds)=>{
     rds.exec('set', 'hi', 'httpserver1');
     rds.exec('set', 'hey', 'httpserver2');
 });
 ```
 
-subscribe
+### Subscribe
 
-```
+```javascript
 var ch = await rds.subscribe('channel');
 for await (var v of ch.receive()) {
     console.log(v);
 }
 ```
+
+
+
+<!----------------------------------------------------------------------------->
+
+[denobundle]: https://github.com/txthinking/denobundle
