@@ -10,15 +10,12 @@
 <br>
 
 ```javascript
-import httpserver from 'https://raw.githubusercontent.com/txthinking/denolib/master/httpserver.js';
+import server from 'https://raw.githubusercontent.com/txthinking/denolib/master/httpserver.js';
 
-httpserver.path('/hello', async (r)=>{
-      return new Response("hello world", {
-        status: 200,
-      });
-});
+server.path('/hello',async (request) =>
+    new Response('Hello World',{ status : 200 }));
 
-httpserver.run({port:2020});
+server.run({ port : 2020 });
 ```
 
 <br>
@@ -26,7 +23,7 @@ httpserver.run({port:2020});
 ### Static
 
 ```javascript
-httpserver.staticdir = "/path/to/static";
+httpserver.staticdir = '/path/to/static';
 ```
 
 ### Static + **[DenoBundle]**
@@ -34,7 +31,8 @@ httpserver.staticdir = "/path/to/static";
 ```javascript
 import readFileSync from './bundle.js';
 
-httpserver.readfile = (path) => readFileSync("static" + path);
+httpserver.readfile = (path) => 
+    readFileSync('static' + path);
 ```
 
 <br>
@@ -58,7 +56,7 @@ httpserver.cors = '*';
 ### 404
 
 ```javascript
-httpserver.default = (r) => {...}
+httpserver.default = (request) => {...}
 ```
 
 <br>
@@ -69,12 +67,19 @@ httpserver.default = (r) => {...}
 ```javascript
 import crypto from 'https://raw.githubusercontent.com/txthinking/denolib/master/crypto.js';
 
-var kv = crypto("abcdefghijklmnopqrstuvwxyz012345"); // pass in a 32 length key
+// Pass in a 32 length key
 
-var token = kv.encrypt("uid", 1);
+const kv = crypto('abcdefghijklmnopqrstuvwxyz012345');
 
-var uid = kv.decrypt("uid", token);
-var uid = kv.decrypt("uid", token, 30*24*60*60); // only allow token to be valid for 30 days
+const token = kv.encrypt('uid',1);
+
+const uid = kv.decrypt('uid',token);
+```
+
+```javascript
+// Only allow token to be valid for 30 days
+
+const uid = kv.decrypt('uid',token,30 * 24 * 60 * 60);
 ```
 
 <br>
@@ -92,13 +97,13 @@ var uid = kv.decrypt("uid", token, 30*24*60*60); // only allow token to be valid
 ```javascript
 import mysql from 'https://raw.githubusercontent.com/txthinking/denolib/master/mysql.js';
 
-var db = await mysql({
-    hostname: "127.0.0.1",
-    port: 3306,
-    username: "root",
-    password: "111111",
-    poolSize: 3,
-    db: "dbname",
+const database = await mysql({
+    hostname : '127.0.0.1' ,
+    password : '111111' ,
+    username : 'root' ,
+    poolSize : 3 ,
+    port : 3306 ,
+    db : 'dbname'
 });
 ```
 
@@ -109,10 +114,11 @@ var db = await mysql({
 ```javascript
 import migrate from 'https://raw.githubusercontent.com/txthinking/denolib/master/migrate.js';
 
-var mg = await migrate(db);
+const mg = await migrate(database);
 
-// each unique id execute at most once
-await mg("a unique id string", `
+// Each unique id execute at most once
+
+await mg('A unique id string', `
     CREATE TABLE user (
         id int(10) unsigned NOT NULL AUTO_INCREMENT,
         email varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL default '',
@@ -120,7 +126,7 @@ await mg("a unique id string", `
     ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 `);
 
-await mg("another unique id string", 'another sql');
+await mg('Another unique id string','another sql');
 ```
 
 <br>
@@ -131,16 +137,31 @@ await mg("another unique id string", 'another sql');
 
 ```javascript
 // table name and row object, keys must match table fields or less
-var row = await db.c('user', {email: 'hi@httpserver.com'});
 
+const row = await database.c('user',{ 
+    email : 'hi@httpserver.com'
+});
+```
+
+```javascript
 // object keys must match table fields or less and must contain id
-var row = await db.u('user', {id: 1, email: 'hey@httpserver.com'});
 
-// pass in id
-var row = await db.r('user', 1);
+const row = await database.u('user',{ 
+    email : 'hey@httpserver.com' ,
+    id : 1 
+});
+```
 
+```javascript
 // pass in id
-await db.d('user', 1);
+
+const row = await database.r('user',1);
+```
+
+```javascript
+// pass in id
+
+await database.d('user',1);
 ```
 
 <br>
@@ -148,8 +169,12 @@ await db.d('user', 1);
 ### SQL
 
 ```javascript
-var rows = await db.query('select * from user where id=?', [1]);
-await db.execute('update user set email=? where id=?', ['hi@httpserver.com', 1]);
+const rows = await database.query(
+    'select * from user where id=?',[1]);
+
+await database.execute(
+    'update user set email=? where id=?',
+    [ 'hi@httpserver.com' , 1 ]);
 ```
 
 <br>
@@ -157,11 +182,20 @@ await db.execute('update user set email=? where id=?', ['hi@httpserver.com', 1])
 ### Transaction
 
 ```javascript
-var r = await db.transaction(async (db)=>{
-    var r = await db.c('user', {email: 'hey@httpserver.com'});
+const request = await database.transaction(async (database) => {
+    
+    const request = await database.c('user',{
+        email : 'hey@httpserver.com'
+    });
+    
     // throw new Error('rollback');
-    await db.execute('update user set email=? where id=?', ['hi@httpserver.com', 1]);
-    var rows = await db.query('select * from user where id=?', [1]);
+    
+    await database.execute('update user set email=? where id=?',
+        [ 'hi@httpserver.com' , 1 ]);
+    
+    const rows = await database.query(
+        'select * from user where id=?',[1]);
+    
     return rows;
 });
 ```
@@ -181,9 +215,9 @@ var r = await db.transaction(async (db)=>{
 ```javascript
 import redis from 'https://raw.githubusercontent.com/txthinking/denolib/master/redis.js';
 
-var rds = await redis({
-    hostname: "127.0.0.1",
-    port: 6379,
+const rds = await redis({
+    hostname : '127.0.0.1' , 
+    port : 6379
 });
 ```
 
@@ -192,16 +226,19 @@ var rds = await redis({
 ### command
 
 ```javascript
-var r = await rds.exec('set', 'hi', 'httpserver');
-var r = await rds.exec('get', 'hi');
+const request = await rds.exec( 'set' , 'hi' , 'httpserver' );
+```
+
+```javascript
+const request = await rds.exec( 'get' , 'hi' );
 ```
 
 ### Pipeline
 
 ```javascript
-await rds.pipeline((rds)=>{
-    rds.exec('set', 'hi', 'httpserver');
-    rds.exec('set', 'hey', 'httpserver');
+await rds.pipeline((rds) => {
+    rds.exec( 'set' , 'hi' , 'httpserver' );
+    rds.exec( 'set' , 'hey' , 'httpserver' );
 });
 ```
 
@@ -210,19 +247,19 @@ await rds.pipeline((rds)=>{
 > Guarantee atomicity
 
 ```javascript
-await rds.transaction((rds)=>{
-    rds.exec('set', 'hi', 'httpserver1');
-    rds.exec('set', 'hey', 'httpserver2');
+await rds.transaction((rds) => {
+    rds.exec( 'set' , 'hi' , 'httpserver1' );
+    rds.exec( 'set' , 'hey' , 'httpserver2' );
 });
 ```
 
 ### Subscribe
 
 ```javascript
-var ch = await rds.subscribe('channel');
-for await (var v of ch.receive()) {
-    console.log(v);
-}
+const channel = await rds.subscribe('channel');
+
+for await (const event of channel.receive())
+    console.log(event);
 ```
 
 
