@@ -75,9 +75,10 @@ var mysql = async (config) => {
     var dbname = config.db;
     delete config.db;
     var conn = await new Client().connect(config);
-    await conn.execute(`CREATE DATABASE IF NOT EXISTS ${dbname}`);
+    await conn.execute(`CREATE DATABASE IF NOT EXISTS ${dbname} charset utf8mb4 collate utf8mb4_unicode_ci`);
     await conn.close();
     config.db = dbname;
+    config.charset = "utf8mb4";
     var conn = await new Client().connect(config);
     return db(conn);
 };
