@@ -71,15 +71,15 @@ import crypto from 'https://raw.githubusercontent.com/txthinking/denolib/master/
 
 const kv = crypto('abcdefghijklmnopqrstuvwxyz012345');
 
-const token = kv.encrypt('uid',1);
+const token = await kv.encrypt('uid',1);
 
-const uid = kv.decrypt('uid',token);
+const uid = await kv.decrypt('uid',token);
 ```
 
 ```javascript
 // Only allow token to be valid for 30 days
 
-const uid = kv.decrypt('uid',token,30 * 24 * 60 * 60);
+const uid = await kv.decrypt('uid',token,30 * 24 * 60 * 60);
 ```
 
 <br>
