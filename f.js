@@ -21,13 +21,11 @@ export async function sh1(s) {
 export async function sh(s) {
     var p = Deno.run({
         cmd: ["sh", "-c", s],
-        stdout: "piped",
-        stderr: "piped",
     });
-    var [status, stdout, stderr] = await Promise.all([p.status(), p.output(), p.stderrOutput()]);
+    var [status] = await Promise.all([p.status()]);
     p.close();
     if (status.code != 0) {
-        throw `${new TextDecoder("utf-8").decode(stdout)} ${new TextDecoder("utf-8").decode(stderr)}`;
+        throw `${status.code}`;
     }
 }
 
