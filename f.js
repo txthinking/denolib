@@ -1,7 +1,7 @@
-import { encode as hexencode, decode as hexdecode } from "https://deno.land/std@0.180.0/encoding/hex.ts";
+import { encode as hexencode, decode as hexdecode } from "https://deno.land/std@0.160.0/encoding/hex.ts";
 import { createHash } from "https://deno.land/std@0.160.0/hash/mod.ts";
-import { join } from "https://deno.land/std@0.180.0/path/mod.ts";
-import { yellow, bgGreen } from "https://deno.land/std@0.180.0/fmt/colors.ts";
+import { join } from "https://deno.land/std@0.160.0/path/mod.ts";
+import { yellow, bgGreen } from "https://deno.land/std@0.160.0/fmt/colors.ts";
 
 // why 1, because return STDOUT, that is 1
 export async function sh1(s) {
