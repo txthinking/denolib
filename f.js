@@ -1,5 +1,5 @@
 import { encode as hexencode, decode as hexdecode } from "https://deno.land/std@0.180.0/encoding/hex.ts";
-import { createHash } from "https://deno.land/std@0.180.0/hash/mod.ts";
+import { createHash } from "https://deno.land/std@0.160.0/hash/mod.ts";
 import { join } from "https://deno.land/std@0.180.0/path/mod.ts";
 import { yellow, bgGreen } from "https://deno.land/std@0.180.0/fmt/colors.ts";
 
